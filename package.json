@@ -1,0 +1,20 @@
+{
+    "name": "StarTreck",
+    "version": "0.0.1",
+    "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+    "description": "StarTreck turn baised statagry game baised on the board game",
+    "dependencies": {
+        "socket.io": "latest",
+        "mysql": "latest",
+        "sequelize": "latest",
+        "crypto": "latest",
+        "express": "3.2.6",
+        "jugglingdb": "latest",
+        "jugglingdb-redis": "latest",
+        "jade": "latest"
+    },
+    "author": "Brian Ridings"
+}
