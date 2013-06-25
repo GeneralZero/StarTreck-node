@@ -3,7 +3,7 @@ var express = require('express')
   , config  = require('./configure/config')
   , https   = require('https')
   , path    = require('path')
-  , io      = require('socket.io').listen(https);
+  , io      = require('socket.io');
 
 var app = express();
 
