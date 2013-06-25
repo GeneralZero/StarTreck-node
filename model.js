@@ -1,4 +1,4 @@
-User.hasMany(Games);var Schema = require('jugglingdb').Schema;
+var Schema = require('jugglingdb').Schema;
 var schema = new Schema('redis', {port: 6379}); //port number depends on your configuration
 // define models
 
@@ -213,6 +213,27 @@ var Unit = schema.define('Unit', {
 	timestamp: { type: Number,  default: Date.now },
 	published: { type: Boolean, default: false, index: true }
 });
+
+
+User.hasMany(Games);
+User.hasMany(Player);
+
+Player.hasMany(Agreement);
+Player.hasMany(Base);
+Player.hasMany(Diplomatic_Nogations);
+Player.hasMany(Fleet);
+
+Fleet.hasMany(Ship);
+
+Plannet.hasMany(Buliding);
+Plannet.hasMany(Factory);
+Plannet.hasMany(Unit);
+
+Plannet.belongsTo(Board_Square);
+
+Board.belongsTo(Game);
+Board_Square.belongsTo(Board);
+
 
 schema.models.User;
 schema.models.Post;

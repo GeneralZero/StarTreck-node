@@ -3,7 +3,7 @@ var express = require('express')
   , config  = require('./configure/config')
   , https   = require('https')
   , path    = require('path')
-  , io      = require('socket.io').listen(config.socket_port);
+  , io      = require('socket.io').listen(https);
 
 var app = express();
 
@@ -23,12 +23,12 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 app.get('/', routes.index);
-app.get('/chat', routes.index);
+app.get('/chat', routes.chat);
 
 https.createServer(config.certs, app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-
+io = io.listen(https);
 io.set('close timeout', 60*60*24);
 io.sockets.on('connection', function (client) {
 
