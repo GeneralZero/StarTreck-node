@@ -11,9 +11,8 @@
         "mysql": "latest",
         "sequelize": "latest",
         "crypto": "latest",
-        "express": "3.2.6",
-        "jugglingdb": "latest",
-        "jugglingdb-redis": "latest",
+        "express": "3.2.6", 
+        "redis": "latest",
         "jade": "latest"
     },
     "author": "Brian Ridings"

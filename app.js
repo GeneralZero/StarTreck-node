@@ -1,9 +1,10 @@
+#!/usr/bin/env node
 var express = require('express')
   , routes  = require('./routes/')
   , config  = require('./configure/config')
   , https   = require('https')
   , path    = require('path')
-  , io      = require('socket.io');
+  , io	    = require('socket.io');
 
 var app = express();
 
@@ -25,11 +26,12 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/chat', routes.chat);
 
-https.createServer(config.certs, app).listen(app.get('port'), function(){
+var server = https.createServer(config.certs, app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-io = io.listen(https);
-io.set('close timeout', 60*60*24);
+
+io = io.listen(server);
+
 io.sockets.on('connection', function (client) {
 
 	var redis1 = require("redis").createClient();
