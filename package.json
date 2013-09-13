@@ -2,7 +2,7 @@
     "name": "StarTreck",
     "version": "0.0.1",
     "private": true,
-  "scripts": {
+    "scripts": {
     "start": "node app.js"
   },
     "description": "StarTreck turn baised statagry game baised on the board game",

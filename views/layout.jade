@@ -3,7 +3,8 @@ html
 	head
 		title #{title}
 		script(src='/socket.io/socket.io.js')
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js')
 		link(rel='stylesheet', href='/stylesheets/style.css')
 	body
-		block content
+		#page-wrap
+			block content
