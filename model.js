@@ -215,7 +215,7 @@ var Unit = schema.define('Unit', {
 });
 
 
-User.hasMany(Games);
+User.hasMany(Game);
 User.hasMany(Player);
 
 Player.hasMany(Agreement);
@@ -223,9 +223,11 @@ Player.hasMany(Base);
 Player.hasMany(Diplomatic_Nogations);
 Player.hasMany(Fleet);
 
+Player.belongsTo(Game);
+
 Fleet.hasMany(Ship);
 
-Planet.hasMany(Buliding);
+Planet.hasMany(Building);
 Planet.hasMany(Factory);
 Planet.hasMany(Unit);
 
@@ -235,5 +237,4 @@ Board.belongsTo(Game);
 Board_Square.belongsTo(Board);
 
 
-schema.models.User;
-schema.models.Post;
+exports.schema = schema;
