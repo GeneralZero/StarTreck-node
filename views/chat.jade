@@ -1,19 +1,20 @@
 extends layout
 
 block content
-	#username
-		input(type='text', name='usernameTxt')
-		input(type='button', name='setUsername', value='Set Username')
-	#sendChat(style='display: none;')
-		input(type='text', name='chatTxt')
-		input(type='button', name='sendBtn', value='Send')
-	#buddyList(style='height: 500px; width: 100px; border: 2px solid black;')
-		#innerList
-	#translationWindow(style='display: none; position: absolute; right: 0px; bottom: 0px; border: 1px solid black; height: 200px; width: 200px;')
-	#chatWindow(style='border: 1px solid black; height: 135px; width: 196px; overflow: scroll;')
-	textarea#chatText(rows='4', cols='25', style='position: relative; overflow: scroll;')
-	br
-
-	div#content
-		p this is cool
-	script(src='/javascripts/chat.js')
+	#header
+		h1
+			a(href='/examples/Chat2/') Chat v2
+		#you
+			span Logged in as: ${username}
+	#section
+		h2 test
+		#chat-wrap
+			#chat-area
+		#userlist
+			ul
+				li.head Current Chatters
+				li test
+				#send-message-area
+					textarea#chatText(rows='4', cols='25')
+					input(type='button', name='sendBtn', value='Send')
+script(src='/javascripts/chat.js')
