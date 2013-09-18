@@ -36,7 +36,7 @@ var Board_Square = schema.define('Board_Square', {
 	content:   { type: Schema.Text },
 	date:      { type: Date,    default: function () { return new Date;} },
 	timestamp: { type: Number,  default: Date.now },
-	published: { type: Boolean, default: false, index: true }
+	published: { type: Boolean, default: false, index: true },
 	is_free:   { type: Boolean, default: true }
 });
 
@@ -95,7 +95,7 @@ var Planet = schema.define('Planet', {
 	date:       { type: Date,    default: function () { return new Date;} },
 	timestamp:  { type: Number,  default: Date.now },
 	max_size:   { type: Number},
-	published:  { type: Boolean, default: false, index: true }
+	published:  { type: Boolean, default: false, index: true },
 	teraformed: { type: Boolean, default: false }
 });
 
@@ -183,16 +183,16 @@ var Ship = schema.define('Ship', {
 	speed:             { type: Number },
 	date:              { type: Date,    default: function () { return new Date;} },
 	timestamp:         { type: Number,  default: Date.now },
-	published:         { type: Boolean, default: false, index: true }
-	clocked:           { type: Boolean, default: false }
-	phasers:           { type: Number, default: 0 }
-	torpedoes:         { type: Number, default: 0 }
-	damage:            { type: Number, default: 0 }
-	weapon_damage:     { type: Number, default: 0 }
-	hull_damage:       { type: Number, default: 0 }
-	sheilds_damage:    { type: Number, default: 0 }
-	sheilds:           { type: Number, default: 0 }
-	hull:              { type: Number, default: 0 }
+	published:         { type: Boolean, default: false, index: true },
+	clocked:           { type: Boolean, default: false },
+	phasers:           { type: Number, default: 0 },
+	torpedoes:         { type: Number, default: 0 },
+	damage:            { type: Number, default: 0 },
+	weapon_damage:     { type: Number, default: 0 },
+	hull_damage:       { type: Number, default: 0 },
+	sheilds_damage:    { type: Number, default: 0 },
+	sheilds:           { type: Number, default: 0 },
+	hull:              { type: Number, default: 0 },
 });
 
 var User = schema.define('User', {
@@ -215,7 +215,7 @@ var Unit = schema.define('Unit', {
 });
 
 
-User.hasMany(Games);
+User.hasMany(Game);
 User.hasMany(Player);
 
 Player.hasMany(Agreement);
@@ -223,17 +223,18 @@ Player.hasMany(Base);
 Player.hasMany(Diplomatic_Nogations);
 Player.hasMany(Fleet);
 
+Player.belongsTo(Game);
+
 Fleet.hasMany(Ship);
 
-Plannet.hasMany(Buliding);
-Plannet.hasMany(Factory);
-Plannet.hasMany(Unit);
+Planet.hasMany(Building);
+Planet.hasMany(Factory);
+Planet.hasMany(Unit);
 
-Plannet.belongsTo(Board_Square);
+Planet.belongsTo(Board_Square);
 
 Board.belongsTo(Game);
 Board_Square.belongsTo(Board);
 
 
-schema.models.User;
-schema.models.Post;
+exports.schema = schema;
