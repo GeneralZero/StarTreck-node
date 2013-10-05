@@ -1,6 +1,6 @@
 function setVarables (vars) {
 	var render = function(req, res){
-		res.render('index', vars);
+		res.render('chat', vars);
 	};
 
 	return render;
