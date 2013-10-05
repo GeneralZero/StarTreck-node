@@ -9,7 +9,8 @@
     "dependencies": {
         "socket.io": "latest",
         "mysql": "latest",
-        "sequelize": "latest",
+        "jugglingdb": "latest",
+        "jugglingdb-redis": "latest",
         "crypto": "latest",
         "express": "3.2.6", 
         "redis": "latest",
