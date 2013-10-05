@@ -1,23 +1,14 @@
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext("2d");
-
-var canvas_width = canvas.width;
-var canvas_height = canvas.height;
-
-var offset = 0;
-
-var grid = [20, 20]; //height, width
-
 function drawBoard(){
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext("2d");
+
+	var canvas_width = canvas.width;
+	var canvas_height = canvas.height;
+
+	var offset = 0;
+
+	var grid = [20, 20]; //height, width
 	for (var x=0; x <= canvas_width/grid[0]; x += 1) { //Vertical Lines
-		/*document.write(x*(canvas_width/grid[1]));
-		document.write(",");
-		document.write(offset);
-		document.write(" to ");
-		document.write(x*(canvas_width/grid[1]));
-		document.write(",");
-		document.write(canvas_height + offset);
-		document.write("</br>");*/
 
 		context.moveTo(x*(canvas_width/grid[1]), 0);
 		context.lineTo(x*(canvas_width/grid[1]), canvas_height);
