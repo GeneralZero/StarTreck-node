@@ -5,8 +5,11 @@ var express = require('express')
 	, https   = require('https')
 	, path    = require('path')
 	, io	    = require('socket.io');
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
 
 var schema = require('./models/schema');
+var schema = require('./models/user');
 
 var app = express();
 
@@ -17,16 +20,31 @@ app.configure(function(){
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
+	app.use(express.cookieParser());
 	app.use(express.bodyParser());
+	app.use(express.errorHandler());
 	app.use(express.methodOverride());
+	app.use(passport.initialize());
+	app.use(passport.session());
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 });
 
-// development only
-//if ('development' == app.get('env')) {
-app.use(express.errorHandler());
-//}
+passport.use(new LocalStrategy(
+	function(username, password, done) {
+		User.findOne({ email: email }, function (err, user) {
+			if (err) { return done(err); }
+			if (!user) {
+				return done(null, false, { message: 'Incorrect username.' });
+			}
+			if (!user.validPassword(password)) {
+				return done(null, false, { message: 'Incorrect password.' });
+			}
+			return done(null, user);
+		});
+	}
+));
+
 routes.route(app);
 
 var server = https.createServer(config.certs, app).listen(app.get('port'), function(){
