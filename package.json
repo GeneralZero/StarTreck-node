@@ -11,6 +11,7 @@
         "mysql": "latest",
         "jugglingdb": "latest",
         "jugglingdb-redis": "latest",
+        "connect-flash": "latest",
         "crypto": "latest",
         "express": "3.2.6", 
         "redis": "latest",
