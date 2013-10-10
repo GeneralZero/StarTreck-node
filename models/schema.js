@@ -1,9 +1,7 @@
 var Schema = require('jugglingdb').Schema;
 var schema = new Schema('redis', {port: 6379}); //port number depends on your configuration
-// define models
 
-var User = require('./user').init(Schema, schema);
-
+// Define game models
 var Agreement = require('./agreement').init(Schema, schema);
 
 var Base = require('./base').init(Schema, schema);
@@ -31,6 +29,9 @@ var Research_Proirity = require('./research_proirity').init(Schema, schema);
 var Ship = require('./ship').init(Schema, schema);
 
 var Unit = require('./unit').init(Schema, schema);
+
+//Define User models
+var User = require('./user').init(Schema, schema);
 
 //Fourghen Keys
 User.hasMany(Game);

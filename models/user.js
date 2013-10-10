@@ -1,10 +1,12 @@
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
 
+var SALT_WORK_FACTOR = 16;
+
 function init (Schema, schema) {
 	var User = schema.define('User', {
-		name:          { type: String, length: 255 },
-		email:         { type: String, length: 255 },
+		name:          { type: String, length: 255 , index: true},
+		email:         { type: String, length: 255 , index: true},
 		bio:           { type: Schema.Text },
 		salt:          { type: String }, 
 		password:      { type: String }, 
@@ -13,16 +15,16 @@ function init (Schema, schema) {
 	});
 
 	// User Validate functions
-	User.validatesUniquenessOf('email', {message: 'email is not unique'});
-	User.validatesPresenceOf('name', 'email');
-	User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
+	User.validatesUniquenessOf('email', {message: 'This Email has already been registered'});
+	User.validatesUniquenessOf('name', {message: 'This Username has already been registered'});
+	User.validatesPresenceOf('name', 'email', 'password');
 
 
 	//User Functions
 	User.beforeSave =  function(next, data) {
 		var user = this;
 
-		if(!user.isModified('password')) return next();
+		console.log(user);
 
 		bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 			if(err) return next(err);
