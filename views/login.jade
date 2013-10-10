@@ -9,6 +9,8 @@ block content
 	else
 		div.loginbox
 			form(name="login", action="/login", method="post")
-				input(type="text", name="user")
-				input(type="password", name="pass")
+				label(for="name") Username
+				input(type="text", name="user") 
+				label(for="password") Password
+				input(type="password", name="pass") 
 				input(type="submit", value="login")
