@@ -1,54 +1,40 @@
 #!/usr/bin/env node
-var express = require('express')
+var express   = require('express')
 	, routes  = require('./routes/routes')
 	, config  = require('./config')
 	, https   = require('https')
 	, path    = require('path')
-	, io	    = require('socket.io');
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+	, io	  = require('socket.io')
+	, flash   = require('connect-flash');
 
 var schema = require('./models/schema');
-var schema = require('./models/user');
 
 var app = express();
 
-// all environments
+// Confiture App
 app.configure(function(){
 	app.set('port', config.https_port);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
-	app.use(express.cookieParser());
+	app.use(express.cookieParser('secret'));
+	app.use(express.session({ cookie: { maxAge: 60000 }}));
+	app.use(flash());
 	app.use(express.bodyParser());
 	app.use(express.errorHandler());
 	app.use(express.methodOverride());
-	app.use(passport.initialize());
-	app.use(passport.session());
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 });
 
-passport.use(new LocalStrategy(
-	function(username, password, done) {
-		User.findOne({ email: email }, function (err, user) {
-			if (err) { return done(err); }
-			if (!user) {
-				return done(null, false, { message: 'Incorrect username.' });
-			}
-			if (!user.validPassword(password)) {
-				return done(null, false, { message: 'Incorrect password.' });
-			}
-			return done(null, user);
-		});
-	}
-));
+//Use declared Routes 
+routes.route(app, flash);
 
-routes.route(app);
-
+// Set Certificates and Key
 var server = https.createServer(config.certs, app).listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 });
 
+//Setup socket.io Server
 var socket = io.listen(server);
