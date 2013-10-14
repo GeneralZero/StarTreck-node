@@ -36,6 +36,11 @@ function init (Schema, schema) {
 			});
 		});
 	};
+	
+	User.prototype.validPassword = function(password)
+	{
+		return bcrypt.compareSync(password, this.password);
+	};
 
 	return User;
 }
