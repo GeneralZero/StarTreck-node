@@ -1,15 +1,15 @@
 extends layout
 
 block content
-	if user
+	if paramaters.user
 		div.welcomebox
 			// Filtered inline output
 			p.
-				Welcome, #{user.name}
-				Email: #{user.email}
+				Welcome, #{paramaters.user.name}
+				Email: #{paramaters.user.email}
 	else
 		div.loginbox
 			form(name="login", action="/login", method="post")
-				input(type="text", name="user")
-				input(type="password", name="pass")
+				input(type="text", name="email")
+				input(type="password", name="password")
 				input(type="submit", value="login")
