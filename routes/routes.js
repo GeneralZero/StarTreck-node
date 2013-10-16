@@ -29,7 +29,7 @@ function generateRandomToken() {
 		chars = "_!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
 	token = new Date().getTime() + '_';
 	require('crypto').randomBytes(48, function(ex, buf) {
-		token += buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-'));
+		token += buf.toString('hex');
 	});
 	return token;
 }
