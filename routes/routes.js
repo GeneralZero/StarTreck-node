@@ -28,11 +28,9 @@ function generateRandomToken() {
 	var user = this,
 		chars = "_!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
 	token = new Date().getTime() + '_';
-	for ( var x = 0; x < 16; x++ ) {
-		var i = Math.floor( Math.random() * 62 );
-		token += chars.charAt( i );
-	}
-	console.log(token);
+	require('crypto').randomBytes(48, function(ex, buf) {
+		token += buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-'));
+	});
 	return token;
 }
 
