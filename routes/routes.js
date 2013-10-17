@@ -1,15 +1,13 @@
-var index = require("./index").setVarables({title: "Express"});
-var chat = require("./chat").setVarables({title: "Express"});
-var login = require("./login").setVarables({title: "Express"});
-var register = require("./register").setVarables({title: "Express"});
-
 //Database Schema
 var schema = require('../models/schema').schema;
+
+//Paramaters for templates
+var paramaters = {};
 
 function ensureAuthenticated(req, res, next) {
 	console.log(req.signedCookies);
 	schema.models.User.findOne({ accessToken: req.signedCookies.session }, function (err, user) {
-		if (err) { return next( err ); }
+		if (err) { return next( err , null); }
 		if (!user) {
 			console.log(user);
 			next(null, user);
@@ -25,9 +23,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function generateRandomToken() {
-	var user = this,
-		chars = "_!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-	token = new Date().getTime() + '_';
+	var token = new Date().getTime() + '_';
 	require('crypto').randomBytes(48, function(ex, buf) {
 		token += buf.toString('hex');
 	});
@@ -76,21 +72,22 @@ function get_user_by_email(email, cb) {
 }
 
 exports.route = function(app, flash){
-	app.get('/', index);
-	app.get('/chat', chat);
+	app.get('/', res.render('index', paramaters) );
+	app.get('/chat', res.render('chat', paramaters));
 	app.get('/login', function (req, res) {
 		ensureAuthenticated(req, res, function (err, user) {
 			if (user) {
-				res.render('index');
+				paramaters.user = user;
+				res.render('index', paramaters);
 			}
 			else{
-				res.render('login');
+				res.render('login', paramaters);
 			}
 		})
 	});
-	app.get('/signin', login);
-	app.get('/register', register);
-	app.get('/signup', register);
+	app.get('/signin', res.redirect('/login'));
+	app.get('/register', res.render('register', paramaters) );
+	app.get('/signup', res.redirect('/register'));
 
 	app.get('/logout', function(req, res){
 		req.logout();
@@ -99,7 +96,6 @@ exports.route = function(app, flash){
 
 	app.post('/login', function(req, res)
 {		console.log(req.headers);
-		paramaters = {};
 		get_user_by_name(req.body.name, function (err, user) {
 			if(err)
 			{
