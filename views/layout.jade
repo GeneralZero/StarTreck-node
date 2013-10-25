@@ -1,11 +1,26 @@
 doctype 5
 html
 	head
+		meta(charset="utf-8")
+		if xsrf
+			meta(content="authenticity_token", name="csrf-param")
+			meta(content="#{xsrf}", name="csrf-token")
 		title #{title}
 		script(src='/socket.io/socket.io.js')
 		script(src='/javascripts/gameboard.js')
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+		script(src='//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+		script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/stylesheets/style.css')
 	body
-		#page-wrap
+		block header
+		.alerts.container
+			if info
+				each item, i in info
+					.alert.alert-info=item
+						button.close(type='button', data-dismiss='alert') ×
+			if err
+				each item, i in err
+					.alert.alert-error=item
+						button.close(type='button', data-dismiss='alert') ×
+		div#page-wrap
 			block content
