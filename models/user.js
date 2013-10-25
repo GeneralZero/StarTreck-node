@@ -9,7 +9,7 @@ function init (Schema, schema) {
 		email:         { type: String, length: 255 , index: true},
 		bio:           { type: Schema.Text },
 		salt:          { type: String }, 
-		accessToken:   { type: String }, 
+		accessToken:   { type: String, index: true }, 
 		password:      { type: String }, 
 		last_login:    { type: Date,  default: Date.now },
 		joinedOn:      { type: Date,  default: Date.now },
@@ -24,9 +24,6 @@ function init (Schema, schema) {
 	//User Functions
 	User.beforeSave =  function(next, data) {
 		var user = this;
-
-		console.log(user);
-
 		bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 			if(err) return next(err);
 

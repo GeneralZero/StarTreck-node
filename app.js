@@ -4,9 +4,8 @@ var express   = require('express')
 	, config  = require('./config')
 	, https   = require('https')
 	, path    = require('path')
-	, io	  = require('socket.io')
-	, flash   = require('connect-flash');
-
+	, flash   = require('connect-flash')
+	, io	  = require('socket.io');
 
 var schema = require('./models/schema');
 
@@ -20,16 +19,16 @@ app.configure(function(){
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser({keepExtensions:true}));
-	app.use(flash());
 	app.use(express.cookieParser("secret"));
 	app.use(express.errorHandler());
+	app.use(flash());
 	app.use(express.methodOverride());
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 });
 
 //Use declared Routes 
-routes.route(app, flash);
+routes.route(app);
 
 // Set Certificates and Key
 var server = https.createServer(config.certs, app).listen(app.get('port'), function(){

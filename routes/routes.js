@@ -1,30 +1,39 @@
 //Database Schema
 var schema = require('../models/schema').schema;
+var config  = require('../config');
 
 //Paramaters for templates
 var paramaters = {};
+paramaters.socket_io_port = config.https_port;
 
 function ensureAuthenticated(req, res, next) {
 	console.log(req.signedCookies);
-	schema.models.User.findOne({ accessToken: req.signedCookies.session }, function (err, user) {
-		if (err) { return next( err , null); }
-		if (!user) {
-			console.log(user);
-			next(null, user);
-		} else {
-			console.log(user);
-			user.last_login = new Date() ;
-			user.save( function (err) {
-				if (err) return next(err);
-				return next(null, user);
-			})
-		}
-	});
+	if (req.signedCookies.session){
+		schema.models.User.all({where :{accessToken: req.signedCookies.session }, limit: 1}, function (err, user) {
+			if (err) { return next( err , null); }
+			if (user.length == 0) {
+				console.log("not user");
+				console.log(user);
+				next(null, user);
+			} else {
+				user = user[0];
+				//console.log(user);
+				user.last_login = new Date() ;
+				user.save( function (err) {
+					if (err) return next(err);
+					return next(null, user);
+				})
+			}
+		});
+	}
+	else{
+		next(null, null);
+	}
 }
 
 function generateRandomToken() {
 	var token = new Date().getTime() + '_';
-	require('crypto').randomBytes(48, function(ex, buf) {
+	require('crypto').randomBytes(128, function(ex, buf) {
 		token += buf.toString('hex');
 	});
 	return token;
@@ -32,11 +41,12 @@ function generateRandomToken() {
 
 function generate_token (user, done) {
 	var token = generateRandomToken();
-	schema.models.User.find({ accessToken: token }, function (err, existingUser) {
+	schema.models.User.all({where: {accessToken: token}, limit:1}, function (err, existingUser) {
 		if (err) { return done( err ); }
-		if (existingUser) {
+		else if (existingUser.length != 0) {
+			//Generate new token if token already exixts
 			console.log(existingUser);
-			generate_token(); // Run the function again - the token has to be unique!
+			generate_token(); 
 		} else {
 			user.accessToken = token;
 			user.save( function (err) {
@@ -48,36 +58,49 @@ function generate_token (user, done) {
 }
 
 function get_user_by_name (name, cb) {
-	schema.models.User.findOne({ name: name }, function (err, user) {
+	schema.models.User.all({where: { name: name }, limit:1}, function (err, user) {
+		//console.log(user);
 		if (err) { return cb(err,user); }
-		else if (!user) {
+		else if (user == []) {
 			return cb("User not authenticated", user);
 		} 
 		else {
-			return cb(null, user);
+			return cb(null, user[0]);
 		}
 	});
 }
 
 function get_user_by_email(email, cb) {
-	schema.models.User.findOne({ email: email }, function (err, user) {
+	schema.models.User.find({where: { email: email }, limit:1}, function (err, user) {
 		if (err) { return cb(err,user); }
-		else if (!user) {
+		else if (user == []) {
 			return cb("User not authenticated", user);
 		} 
 		else {
-			return cb(null, user);
+			return cb(null, user[0]);
 		}
 	});
 }
 
-exports.route = function(app, flash){
-	app.get('/', res.render('index', paramaters) );
-	app.get('/chat', res.render('chat', paramaters));
+exports.route = function(app){
+	app.get('/', function (req, res) {
+		res.render('index', paramaters);
+	});
+	app.get('/chat', function (req, res) {
+		res.render('chat', paramaters);
+	});
 	app.get('/login', function (req, res) {
+
 		ensureAuthenticated(req, res, function (err, user) {
-			if (user) {
+			if (err)
+			{
+				req.flash('err', err);
+				res.render('login', paramaters);
+			}
+			else if (user) {
+				console.log(user);
 				paramaters.user = user;
+				console.log(paramaters);
 				res.render('index', paramaters);
 			}
 			else{
@@ -85,38 +108,68 @@ exports.route = function(app, flash){
 			}
 		})
 	});
-	app.get('/signin', res.redirect('/login'));
-	app.get('/register', res.render('register', paramaters) );
-	app.get('/signup', res.redirect('/register'));
+	app.get('/signin', function (req, res) {
+		res.redirect('/login');
+	});
+	app.get('/register', function (req, res) {
+		res.render('register', paramaters);
+	});
+	app.get('/signup', function (req, res) {
+		res.redirect('/register');
+	});
 
 	app.get('/logout', function(req, res){
 		req.logout();
+		req.flash('info', "You have been logged out");
 		res.redirect('/');
 	});
-
-	app.post('/login', function(req, res)
-{		console.log(req.headers);
-		get_user_by_name(req.body.name, function (err, user) {
-			if(err)
+	app.get('/user', function(req, res){
+		ensureAuthenticated(req, res, function (err, user) {
+			if (err)
 			{
-				console.log(err);
-				paramaters.err = err;
+				req.flash('err', err);
+				res.render('login', paramaters);
 			}
-			else if (!user)
-			{
-				console.log(err);
-				paramaters.err = err;
-				paramaters.info = info;
-				console.log("User not authenticated")
+			else if (user) {
+				console.log(user);
+				paramaters.user = user;
+				res.render('user', paramaters);
 			}
 			else{
+				req.flash('err', "Username or password is incorrect");
+				res.render('login', paramaters);
+			}
+		})
+	});
+	
+	app.post('/login', function(req, res){	
+		get_user_by_name(req.body.user, function (err, user) {
+			//console.log(err);
+			console.log(user);
+			if(err != null)
+			{
+				//Error getting user or password
+				console.log("err");
+				req.flash('err', err);
+				res.render('login', paramaters);
+			}
+			else if (user == null)
+			{
+				//No error but no user
+				req.flash('err', "Could not find user");
+				res.render('login', paramaters);
+				console.log("User " + req.body.name + " not authenticated");
+			}
+			else{
+				//Authenticated but no token
 				generate_token(user, function (err, cookieid) {
-					console.log(cookieid);
-					res.cookie('session', cookieid, { maxAge: 900000, signed: true });
-					if (paramaters.err) {
-					res.render('login', paramaters);
+
+					if (err) {
+						req.flash('err', err);
+						res.render('login', paramaters);
 					}
 					else {
+						res.cookie('session', cookieid, { maxAge: 900000, signed: true });
 						res.render('user', paramaters);
 					}
 				});
@@ -133,15 +186,14 @@ exports.route = function(app, flash){
 		user.email = req.body.email;
 		user.password = req.body.password;
 		
-		console.log(user);
-		
 		user.save(function (err) {
 			if (err != null) {
 				console.log('Error saving user' + err);
-				res.redirect('/register')
+				req.flash('err', err);
+				res.redirect('/register');
 			};
 		});
-
+		req.flash('info', "You have logged in.");
 		res.redirect('/');
 	})
 };
