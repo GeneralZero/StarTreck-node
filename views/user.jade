@@ -5,8 +5,8 @@ block content
 		div.welcomebox
 			// Filtered inline output
 			p.
-				Welcome, #{paramaters.user.name}
-				Email: #{paramaters.user.email}
+				Welcome, #{user.name}
+				Email: #{user.email}
 	else
 		div.loginbox
 			form(name="login", action="/login", method="post")
