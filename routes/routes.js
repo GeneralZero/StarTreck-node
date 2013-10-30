@@ -121,7 +121,7 @@ exports.route = function(app){
 
 	app.get('/logout', function(req, res){
 		req.flash('info', "You have been logged out");
-		console.log(req.session);
+		console.log(req.session.flash);
 		res.redirect('/');
 	});
 	app.get('/user', function(req, res){
