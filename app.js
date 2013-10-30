@@ -19,13 +19,15 @@ app.configure(function(){
 	app.use(express.favicon());
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser({keepExtensions:true}));
-	app.use(express.cookieParser("secret"));
+	app.use(express.cookieParser("secretKey"));
 	app.use(express.errorHandler());
+	app.use(express.session({secret: 'secretKey'}));
 	app.use(flash());
 	app.use(express.methodOverride());
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 });
+
 
 //Use declared Routes 
 routes.route(app);
@@ -34,6 +36,7 @@ routes.route(app);
 var server = https.createServer(config.certs, app).listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 });
+
 
 //Setup socket.io Server
 var socket = io.listen(server);

@@ -1,12 +1,14 @@
 //Database Schema
 var schema = require('../models/schema').schema;
 var config  = require('../config');
+var bcrypt = require('bcrypt');
+var crypto = require('crypto');
 
 //Paramaters for templates
 var paramaters = {};
 paramaters.socket_io_port = config.https_port;
 
-function ensureAuthenticated(req, res, next) {
+function verifyCookie(req, res, next) {
 	console.log(req.signedCookies);
 	if (req.signedCookies.session){
 		schema.models.User.all({where :{accessToken: req.signedCookies.session }, limit: 1}, function (err, user) {
@@ -59,11 +61,11 @@ function generate_token (user, done) {
 
 function get_user_by_name (name, cb) {
 	schema.models.User.all({where: { name: name }, limit:1}, function (err, user) {
-		//console.log(user);
+		console.log(user);
 		if (err) { return cb(err,user); }
 		else if (user == []) {
 			return cb("User not authenticated", user);
-		} 
+		}
 		else {
 			return cb(null, user[0]);
 		}
@@ -74,7 +76,7 @@ function get_user_by_email(email, cb) {
 	schema.models.User.find({where: { email: email }, limit:1}, function (err, user) {
 		if (err) { return cb(err,user); }
 		else if (user == []) {
-			return cb("User not authenticated", user);
+			return cb("Username or password is incorrect", user);
 		} 
 		else {
 			return cb(null, user[0]);
@@ -90,8 +92,8 @@ exports.route = function(app){
 		res.render('chat', paramaters);
 	});
 	app.get('/login', function (req, res) {
-
-		ensureAuthenticated(req, res, function (err, user) {
+		//Verify if Cookie is valid
+		verifyCookie(req, res, function (err, user) {
 			if (err)
 			{
 				req.flash('err', err);
@@ -101,7 +103,6 @@ exports.route = function(app){
 				console.log(user);
 				paramaters.user = user;
 				console.log(paramaters);
-				res.render('index', paramaters);
 			}
 			else{
 				res.render('login', paramaters);
@@ -119,8 +120,8 @@ exports.route = function(app){
 	});
 
 	app.get('/logout', function(req, res){
-		req.logout();
 		req.flash('info', "You have been logged out");
+		console.log(req.session);
 		res.redirect('/');
 	});
 	app.get('/user', function(req, res){
@@ -132,7 +133,6 @@ exports.route = function(app){
 			}
 			else if (user) {
 				console.log(user);
-				paramaters.user = user;
 				res.render('user', paramaters);
 			}
 			else{
@@ -161,18 +161,30 @@ exports.route = function(app){
 				console.log("User " + req.body.name + " not authenticated");
 			}
 			else{
-				//Authenticated but no token
-				generate_token(user, function (err, cookieid) {
+				//Compare Hashed password
+				if (!bcrypt.compareSync(req.body.pass, user.password))
+				{
+					req.flash('Wrong username or password.');
+					res.render('login', paramaters);
+				}
+				else {
+					//If hashed password is Correct
+					//Authenticated but no token
+					generate_token(user, function (err, cookieid) {
+						if (err) {
+							req.flash('err', err);
+							res.render('login', paramaters);
+						}
+						else {
+							res.cookie('session', cookieid, { maxAge: 900000, signed: true });
+							res.render('user', paramaters);
+						}
+					});
 
-					if (err) {
-						req.flash('err', err);
-						res.render('login', paramaters);
-					}
-					else {
-						res.cookie('session', cookieid, { maxAge: 900000, signed: true });
-						res.render('user', paramaters);
-					}
-				});
+					console.log(user);
+					paramaters.user = user;
+					res.render('user', paramaters);
+				}
 
 				paramaters.user = user;
 			}
