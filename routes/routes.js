@@ -35,9 +35,7 @@ function verifyCookie(req, res, next) {
 
 function generateRandomToken() {
 	var token = new Date().getTime() + '_';
-	require('crypto').randomBytes(128, function(ex, buf) {
-		token += buf.toString('hex');
-	});
+	token += crypto.randomBytes(128).toString('hex');
 	return token;
 }
 
@@ -52,7 +50,7 @@ function generate_token (user, done) {
 		} else {
 			user.accessToken = token;
 			user.save( function (err) {
-				if (err) return done(err);
+				if (err) return done(err, null);
 				return done(null, user.accessToken);
 			})
 		}
@@ -64,7 +62,7 @@ function get_user_by_name (name, cb) {
 		console.log(user);
 		if (err) { return cb(err,user); }
 		else if (user == []) {
-			return cb("User not authenticated", user);
+			return cb("User not authenticated", null);
 		}
 		else {
 			return cb(null, user[0]);
@@ -76,7 +74,7 @@ function get_user_by_email(email, cb) {
 	schema.models.User.find({where: { email: email }, limit:1}, function (err, user) {
 		if (err) { return cb(err,user); }
 		else if (user == []) {
-			return cb("Username or password is incorrect", user);
+			return cb("Username or password is incorrect", null);
 		} 
 		else {
 			return cb(null, user[0]);
@@ -96,7 +94,7 @@ exports.route = function(app){
 		verifyCookie(req, res, function (err, user) {
 			if (err)
 			{
-				req.flash('err', err);
+				paramaters.err = err;
 				res.render('login', paramaters);
 			}
 			else if (user) {
@@ -120,15 +118,14 @@ exports.route = function(app){
 	});
 
 	app.get('/logout', function(req, res){
-		req.flash('info', "You have been logged out");
-		console.log(req.session.flash);
+		paramaters.info = ["You have been logged out"];
 		res.redirect('/');
 	});
 	app.get('/user', function(req, res){
 		ensureAuthenticated(req, res, function (err, user) {
 			if (err)
 			{
-				req.flash('err', err);
+				paramaters.err = [err];
 				res.render('login', paramaters);
 			}
 			else if (user) {
@@ -136,13 +133,14 @@ exports.route = function(app){
 				res.render('user', paramaters);
 			}
 			else{
-				req.flash('err', "Username or password is incorrect");
+				paramaters.err = "Username or password is incorrect";
 				res.render('login', paramaters);
 			}
 		})
 	});
 	
 	app.post('/login', function(req, res){	
+
 		get_user_by_name(req.body.user, function (err, user) {
 			//console.log(err);
 			console.log(user);
@@ -150,21 +148,22 @@ exports.route = function(app){
 			{
 				//Error getting user or password
 				console.log("err");
-				req.flash('err', err);
+				paramaters.err = [err];
 				res.render('login', paramaters);
 			}
 			else if (user == null)
 			{
 				//No error but no user
-				req.flash('err', "Could not find user");
+				paramaters.err = ["Wrong username or password."];
 				res.render('login', paramaters);
 				console.log("User " + req.body.name + " not authenticated");
 			}
 			else{
+				console.log(req.body);
 				//Compare Hashed password
-				if (!bcrypt.compareSync(req.body.pass, user.password))
+				if (!bcrypt.compareSync(req.body.password, user.password))
 				{
-					req.flash('Wrong username or password.');
+					paramaters.err = ['Wrong username or password.'];
 					res.render('login', paramaters);
 				}
 				else {
@@ -172,21 +171,19 @@ exports.route = function(app){
 					//Authenticated but no token
 					generate_token(user, function (err, cookieid) {
 						if (err) {
-							req.flash('err', err);
+							console.log(err);
+							paramaters.err = [err];
 							res.render('login', paramaters);
 						}
 						else {
+							console.log(cookieid);
 							res.cookie('session', cookieid, { maxAge: 900000, signed: true });
+							console.log(user);
+							paramaters.user = user;
 							res.render('user', paramaters);
 						}
-					});
-
-					console.log(user);
-					paramaters.user = user;
-					res.render('user', paramaters);
+					}); 
 				}
-
-				paramaters.user = user;
 			}
 		});
 	});
@@ -201,11 +198,11 @@ exports.route = function(app){
 		user.save(function (err) {
 			if (err != null) {
 				console.log('Error saving user' + err);
-				req.flash('err', err);
+				paramaters.err = [err];
 				res.redirect('/register');
 			};
 		});
-		req.flash('info', "You have logged in.");
+		paramaters.info =  ["You have logged in."];
 		res.redirect('/');
 	})
 };

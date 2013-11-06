@@ -12,4 +12,4 @@ TODO
 * [ ] Add a logout feature
 * [ ] Add experation on cookies
 * [ ] Add XSRF protection
-* [ ] Add Expieration Limit on Cookies
+* [ ] Add Expire Limit on Cookies

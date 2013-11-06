@@ -7,10 +7,14 @@ block content
 			p.
 				Welcome, #{user.name}
 	else
-		div.loginbox
-			form(name="login", action="/login", method="post")
-				label(for="name") Username
-				input(type="text", name="user") 
-				label(for="password") Password
-				input(type="password", name="password") 
-				input(type="submit", value="login")
+		form(class="form-horizontal", name="login", action='/login', method="post")
+			.control-group
+				label.control-label(for='user') Username
+				.controls
+					input#inputEmail(type='text', name="user", placeholder='Email')
+			.control-group
+				label.control-label(for='password') Password
+				.controls
+					input#inputPassword(type='password', name="password", placeholder='Password')
+			.control-group
+				button.btn(type='submit') Sign in
