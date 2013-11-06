@@ -100,7 +100,8 @@ exports.route = function(app){
 			else if (user) {
 				console.log(user);
 				paramaters.user = user;
-				console.log(paramaters);
+				paramaters.info = ["You are already logged in."];
+				res.redirect('/');
 			}
 			else{
 				res.render('login', paramaters);
