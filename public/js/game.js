@@ -1,44 +1,108 @@
+$("document").ready(function(){
+	var game = new Phaser.Game(800, 800, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
 
+	function preload() {
 
+		game.load.tilemap('map', 'assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON);
 
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext("2d");
+		game.load.image('ground_1x1', 'assets/tilemaps/tiles/ground_1x1.png');
+		game.load.image('walls_1x2', 'assets/tilemaps/tiles/walls_1x2.png');
+		game.load.image('tiles2', 'assets/tilemaps/tiles/tiles2.png');
 
-var canvas_width = canvas.width;
-var canvas_height = canvas.height;
-var offset = 0;
-var grid = [20, 20]; //height, width
+		game.load.image('phaser', 'assets/sprites/arrow.png');
+		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
 
-var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
-socket.on('get_board_data', function (data) {
-	for(var entity in data){
-		console.log(data[entity]);
 	}
+
+	var cursors;
+	var map;
+	var coins;
+
+	var layer;
+	var sprite;
+
+	function create() {
+
+		map = game.add.tilemap('map');
+
+		map.addTilesetImage('ground_1x1');
+		map.addTilesetImage('walls_1x2');
+		map.addTilesetImage('tiles2');
+
+		map.setCollisionBetween(1, 12);
+
+		layer = map.createLayer('Tile Layer 1');
+
+		layer.resizeWorld();
+
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		//  Here we create our coins group
+		coins = game.add.group();
+		coins.enableBody = true;
+
+		//  And now we convert all of the Tiled objects with an ID of 34 into sprites within the coins group
+		map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
+
+		//  Add animations to all of the coin sprites
+		coins.callAll('animations.add', 'animations', 'spin', [0, 1, 2, 3, 4, 5], 10, true);
+		coins.callAll('animations.play', 'animations', 'spin');
+
+		sprite = game.add.sprite(260, 100, 'phaser');
+		sprite.anchor.set(0.5);
+
+		game.physics.arcade.enable(sprite);
+
+		//  This adjusts the collision body size.
+		sprite.body.setSize(32, 32, 16, 16);
+
+		//  We'll set a lower max angular velocity here to keep it from going totally nuts
+		sprite.body.maxAngular = 500;
+
+		//  Apply a drag otherwise the sprite will just spin and never slow down
+		sprite.body.angularDrag = 50;
+
+		game.camera.follow(sprite);
+
+		cursors = game.input.keyboard.createCursorKeys();
+
+	}
+
+	function update() {
+
+		game.physics.arcade.collide(sprite, layer);
+		game.physics.arcade.overlap(sprite, coins, collectCoin, null, this);
+
+		sprite.body.velocity.x = 0;
+		sprite.body.velocity.y = 0;
+		sprite.body.angularVelocity = 0;
+
+		if (cursors.left.isDown)
+		{
+			sprite.body.angularVelocity = -300;
+		}
+		else if (cursors.right.isDown)
+		{
+			sprite.body.angularVelocity = 300;
+		}
+
+		if (cursors.up.isDown)
+		{
+			game.physics.arcade.velocityFromAngle(sprite.angle, 300, sprite.body.velocity);
+		}
+
+	}
+
+	function collectCoin(player, coin) {
+
+		coin.kill();
+
+	}
+
+	function render() {
+
+		game.debug.body(sprite);
+
+	}
+
 });
-
-var board_objects = [];
-
-function drawBoard(){
-	for (var x=0; x <= canvas_width/grid[0]; x += 1) { //Vertical Lines
-		context.moveTo(x*(canvas_width/grid[1]), 0);
-		context.lineTo(x*(canvas_width/grid[1]), canvas_height);
-	}
-
-	for (var x=0; x <= canvas_height/grid[1]; x += 1) { //Horozontal Lines
-		context.moveTo(0, x*(canvas_height/grid[0]));
-		context.lineTo(canvas_width, x*(canvas_height/grid[0]));
-	}
-
-	context.strokeStyle = "black";
-	context.stroke();
-
-	/*for(objects in board_objects)
-	{
-
-	}*/
-
-}
-
-drawBoard();
-
-
