@@ -1,9 +1,19 @@
 $("document").ready(function(){
-	var game = new Phaser.Game(800, 800, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
+	//Initalize Socket.io
+	var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+	socket.on('get_board_data', function (data) {
+		for(var entity in data){
+			console.log(data[entity]);
+		}
+	});
+
+
+	var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
+	var universe = {};
 
 	function preload() {
 
-		game.load.tilemap('map', 'assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('universe', 'assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON);
 
 		game.load.image('ground_1x1', 'assets/tilemaps/tiles/ground_1x1.png');
 		game.load.image('walls_1x2', 'assets/tilemaps/tiles/walls_1x2.png');
@@ -15,7 +25,6 @@ $("document").ready(function(){
 	}
 
 	var cursors;
-	var map;
 	var coins;
 
 	var layer;
@@ -23,15 +32,15 @@ $("document").ready(function(){
 
 	function create() {
 
-		map = game.add.tilemap('map');
+		universe.map = game.add.tilemap('universe');
 
-		map.addTilesetImage('ground_1x1');
-		map.addTilesetImage('walls_1x2');
-		map.addTilesetImage('tiles2');
+		universe.map.addTilesetImage('ground_1x1');
+		universe.map.addTilesetImage('walls_1x2');
+		universe.map.addTilesetImage('tiles2');
 
-		map.setCollisionBetween(1, 12);
+		universe.map.setCollisionBetween(1, 12);
 
-		layer = map.createLayer('Tile Layer 1');
+		layer = universe.map.createLayer('Tile Layer 1');
 
 		layer.resizeWorld();
 
@@ -42,7 +51,7 @@ $("document").ready(function(){
 		coins.enableBody = true;
 
 		//  And now we convert all of the Tiled objects with an ID of 34 into sprites within the coins group
-		map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
+		universe.map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
 
 		//  Add animations to all of the coin sprites
 		coins.callAll('animations.add', 'animations', 'spin', [0, 1, 2, 3, 4, 5], 10, true);
@@ -69,6 +78,9 @@ $("document").ready(function(){
 	}
 
 	function update() {
+		//Load Visable Planets
+
+		//Load Visable
 
 		game.physics.arcade.collide(sprite, layer);
 		game.physics.arcade.overlap(sprite, coins, collectCoin, null, this);

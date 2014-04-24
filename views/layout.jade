@@ -13,6 +13,7 @@ html
     if game
       != js('lib/phaser')
       != js('game')
+      script(src="/socket.io/socket.io.js")
   body
     #wrap
       include partials/navigation
