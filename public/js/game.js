@@ -74,7 +74,6 @@ $("document").ready(function(){
 		game.camera.follow(sprite);
 
 		cursors = game.input.keyboard.createCursorKeys();
-
 	}
 
 	function update() {
@@ -105,16 +104,43 @@ $("document").ready(function(){
 
 	}
 
-	function collectCoin(player, coin) {
+	function renderBoard(){
+		//On input Update board
 
-		coin.kill();
+		//Render the Board
+
+		//Render the Planets
+		//Render the Ships and Outposts
+		//Render the Blackholes
+		//Render Fog of War
+
+	}
+
+	function renderSidebar(){
+		//On update of varables update sidebar
+
+		//Render Username
+
+		//Render Class
 
 	}
 
 	function render() {
 
+		renderBoard()
+
+		renderSidebar()
+
 		game.debug.body(sprite);
 
+	}
+
+	function renderEndOfRound(){
+
+	}
+
+	function getBoardState(){
+		
 	}
 
 });
