@@ -1,4 +1,8 @@
+var fs = require('fs');
+
 module.exports = {
+
+  certs: { key: fs.readFileSync('./ssl/node.key'), cert: fs.readFileSync('./ssl/node.crt')},
 
   db: process.env.MONGODB|| 'mongodb://localhost:27017/test',
 

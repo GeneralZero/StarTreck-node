@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-
+var https = require('https');
 var _ = require('underscore');
 var express = require('express');
 var cookieParser = require('cookie-parser');
@@ -12,6 +12,7 @@ var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
+var io = require('socket.io');
 
 var MongoStore = require('connect-mongo')({ session: session });
 var flash = require('express-flash');
@@ -204,8 +205,11 @@ app.use(errorHandler());
  * Start Express server.
  */
 
-app.listen(app.get('port'), function() {
+var server = https.createServer(secrets.certs, app).listen(app.get('port'), function(){
   console.log("✔ Express server listening on port %d in %s mode", app.get('port'), app.get('env'));
 });
+
+//Setup socket.io Server
+var socket = io.listen(server);
 
 module.exports = app;
