@@ -1,12 +1,12 @@
 function init (Schema, schema) {
 	var Player = schema.define('Player', {
-		title:           { type: String, length: 255 },
-		current_id:      { type: String, length: 255 },
-		id:              { type: String, length: 255 },
+		title:           { type: String},
+		current_id:      { type: String},
+		id:              { type: String},
 		is_admin:        { type: Boolean, default: false },
-		race:            { type: String, length: 255 },
-		power:           { type: String, length: 255 },
-		content:         { type: Schema.Text },
+		race:            { type: String},
+		power:           { type: String},
+		content:         { type: String},
 		date:            { type: Date,    default: function () { return new Date;} },
 		timestamp:       { type: Number,  default: Date.now },
 		industry:        { type: Number},
@@ -53,7 +53,7 @@ function init (Schema, schema) {
 		pol_resistance:   { type: Boolean, default: false }, // (10) – Available political points are spent on a 1-to-1 ratio to mitigate invasion collateral damage. Cannot be researched by Borg or Klingons.
 		ultra_science:    { type: Boolean, default: false }, // (20) – Can be researched multiple times to give you 5 victory points per level.
 
-		standing:        { type: Schema.Text}// Standing with minor races 
+		standing:        { type: String}// Standing with minor races 
 		//Credits may be converted to industry at a rate of 3 to 1.
 
 		// AT WAR
