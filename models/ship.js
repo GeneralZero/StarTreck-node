@@ -1,3 +1,5 @@
+var mongoose = require('mongoose');
+
 var shipSchema = new mongoose.Schema({
 	title:             { type: String },
 	content:           { type: String },

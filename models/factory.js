@@ -1,21 +1,14 @@
-function init (Schema, schema) {
-	var Factory = schema.define('Factory', {
-		title:     { type: String, length: 255 },
-		content:   { type: Schema.Text },
-		height:    { type: Number },
-		width:     { type: Number },
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
+var factorySchema = new mongoose.Schema({
+	title:     { type: String },
+	content:   { type: String },
+	height:    { type: Number },
+	width:     { type: Number },
+	timestamp: { type: Number,  default: Date.now },
+	published: { type: Boolean, default: false, index: true }
+});
 
-	//User Functions
-
-	return Factory;
-}
-
-exports.init = init;
+module.exports = mongoose.model('Factory', factorySchema);
 
 

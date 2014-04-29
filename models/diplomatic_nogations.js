@@ -1,19 +1,13 @@
-function init (Schema, schema) {
-	var Diplomatic_Nogations = schema.define('Diplomatic_Nogations', {
-		title:     { type: String, length: 255 },
-		content:   { type: Schema.Text },
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
 
-	//User Functions
+var diplomatic_nogationsSchema = new mongoose.Schema({
+	title:     { type: String},
+	content:   { type: String},
+	timestamp: { type: Number,  default: Date.now },
+	published: { type: Boolean, default: false, index: true }
+});
 
-	return Diplomatic_Nogations;
-}
-
-exports.init = init;
+module.exports = mongoose.model('Diplomatic_Nogations', diplomatic_nogationsSchema);
 
 

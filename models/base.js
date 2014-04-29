@@ -1,20 +1,12 @@
-function init (Schema, schema) {
-	var Base = schema.define('Base', {
-		title:     { type: String, length: 255 },
-		content:   { type: Schema.Text },
-		type:      { type: String, length: 255 }, //Starbase, Outpost
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
+var baseSchema = new mongoose.Schema({
+	title:     { type: String},
+	content:   { type: String},
+	type:      { type: String}, //Starbase, Outpost
+	timestamp: { type: Number,  default: Date.now },
+	published: { type: Boolean, default: false, index: true }
+});
 
-	//User Functions
-
-	return Base;
-}
-
-exports.init = init;
-
+module.exports = mongoose.model('Base', baseSchema);
 

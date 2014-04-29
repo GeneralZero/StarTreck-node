@@ -1,3 +1,5 @@
+var mongoose = require('mongoose');
+
 var planetSchema = new mongoose.Schema({
 	title:      { type: String},
 	id:         { type: String},

@@ -1,22 +1,14 @@
-function init (Schema, schema) {
-	var Fleet = schema.define('Fleet', {
-		title:     { type: String, length: 255 },
-		content:   { type: Schema.Text },
-		height:    { type: Number },
-		width:     { type: Number },
-		speed:     { type: Number },
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
+var fleetSchema = new mongoose.Schema({
+	title:     { type: String},
+	content:   { type: String },
+	height:    { type: Number },
+	width:     { type: Number },
+	speed:     { type: Number },
+	timestamp: { type: Number,  default: Date.now },
+	published: { type: Boolean, default: false, index: true }
+});
 
-	//User Functions
-
-	return Fleet;
-}
-
-exports.init = init;
-
+module.exports = mongoose.model('Fleet', fleetSchema);
 

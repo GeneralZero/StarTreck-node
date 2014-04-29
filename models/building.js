@@ -1,20 +1,11 @@
-function init (Schema, schema) {
-	var Building = schema.define('Building', {
-		title:     { type: String, length: 255 },
-		type:      { type: String, length: 255 }, //lab, factory, 
-		content:   { type: Schema.Text },
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
+var buildingSchema = new mongoose.Schema({
+	title:     { type: String},
+	type:      { type: String}, //lab, factory, 
+	content:   { type: String},
+	timestamp: { type: Number,  default: Date.now },
+	published: { type: Boolean, default: false, index: true }
+});
 
-	//User Functions
-
-	return Building;
-}
-
-exports.init = init;
-
-
+module.exports = mongoose.model('Base', baseSchema);

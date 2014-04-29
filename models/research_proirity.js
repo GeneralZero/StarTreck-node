@@ -1,19 +1,11 @@
-function init (Schema, schema) {
-	var Research_Proirity = schema.define('Research_Proirity', {
-		title:     { type: String, length: 255 },
-		content:   { type: Schema.Text },
-		date:      { type: Date,    default: function () { return new Date;} },
-		timestamp: { type: Number,  default: Date.now },
-		published: { type: Boolean, default: false, index: true }
-	});
+var mongoose = require('mongoose');
 
-	// User Validate functions
+var research_proiritySchema = new mongoose.Schema({
+	title:     { type: String},
+	content:   { type: String },
+	timestamp: { type: Number,  default: Date.now },
+});
 
-	//User Functions
-
-	return Research_Proirity;
-}
-
-exports.init = init;
+module.exports = mongoose.model('Research Proirity', research_proiritySchema);
 
 
