@@ -6,8 +6,8 @@ var playerSchema = require('./models/player');
 var UserSchema = require('./models/User');
 
 //Get Cookie return User
-function verifyUserCookie (cookie){
-
+function verifyUserCookie (cookies){
+	console.log(cookie);
 }
 
 function loadRequestedData (user) {
@@ -31,13 +31,43 @@ function endOfTurn(user, data){
 module.exports.listen = function(app){
 	io = socketio.listen(app)
 
+	io.configure(function (){
+		io.set('authorization', function (handshakeData, callback) {
+			// findDatabyip is an async example function
+			findDatabyIP(handshakeData.address.address, function (err, data) {
+				if (err) return callback(err);
+
+				if (data.authorized) {
+					handshakeData.foo = 'bar';
+				for(var prop in data) handshakeData[prop] = data[prop];
+					callback(null, true);
+				} else {
+					callback(null, false);
+				}
+			}) 
+		});
+	});
+
+	io.set('authorization', function (handshakeData, accept) {
+		if (handshakeData.headers.cookie) {
+
+			handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
+			handshakeData.sessionID = handshakeData.cookie['express.sid'];
+			if (handshakeData.cookie['express.sid'] == handshakeData.sessionID) {
+				return accept('Cookie is invalid.', false);
+			}
+
+		} 
+		else{
+			return accept('No cookie transmitted.', false);
+		} 
+		accept(null, true);
+	});
+
 	//Occures when get new user
 	io.sockets.on('connection', function (socket) {
-		//
-
-
-		//Cookie for User
-		console.log(socket.handshake.headers.cookie);
+		console.log(socket.id);
+		var user = verifyUserCookie(socket.handshake.headers.cookie);
 
 		socket.emit('get_board_data', [
 				{"ship": { "owner":"test1",

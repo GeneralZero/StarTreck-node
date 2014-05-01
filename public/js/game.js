@@ -1,11 +1,13 @@
 $("document").ready(function(){
 	//Initalize Socket.io
 	var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+
 	socket.on('get_board_data', function (data) {
 		for(var entity in data){
 			console.log(data[entity]);
 		}
 	});
+
 
 
 	var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
