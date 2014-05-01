@@ -13,7 +13,8 @@ var Player = require('./player');
 var Research_Proirity = require('./research_proirity');
 var Ship = require('./ship');
 var Unit = require('./unit');
-
+var User = require('./User')
+/*
 //Set Connections
 User.hasMany(Game);
 User.hasMany(Player);
@@ -35,3 +36,4 @@ Planet.belongsTo(Board_Square);
 
 Board.belongsTo(Game);
 Board_Square.belongsTo(Board);
+*/

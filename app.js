@@ -188,6 +188,6 @@ var server = https.createServer(secrets.certs, app).listen(app.get('port'), func
 });
 
 //Setup socket.io Server
-var game_server = io.listen(server, );
+var game_server = io.listen(server);
 
 module.exports = app;

@@ -1,7 +1,9 @@
-var socketio = require('socket.io')
+var socketio = require('socket.io');
 
 //Game Database Dependencies
-var gameSchema = require('./models/schema')
+var gameSchema = require('./models/game');
+var playerSchema = require('./models/player');
+var UserSchema = require('./models/User');
 
 //Get Cookie return User
 function verifyUserCookie (cookie){

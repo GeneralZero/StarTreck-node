@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 
+//Game Includes
+var gameSchema = require('./game');
+var playerSchema = require('./player')
+
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
   password: String,
@@ -18,6 +22,9 @@ var userSchema = new mongoose.Schema({
     website: { type: String, default: '' },
     picture: { type: String, default: '' }
   },
+
+  games: [gameSchema],
+  players: [playerSchema],
 
   resetPasswordToken: String,
   resetPasswordExpires: Date

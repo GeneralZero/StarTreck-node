@@ -1,5 +1,12 @@
 var mongoose = require('mongoose');
 
+//Connected Attributies
+var agreementSchema = require('./agreement');
+var gameSchema = require('./game');
+var baseSchema = require('./base');
+var diplomatic_nogationSchema = require('./diplomatic_nogations');
+var shipSchema = require('./ship');
+
 var playerSchema = new mongoose.Schema({
 	title:           { type: String},
 	current_id:      { type: String},
@@ -52,7 +59,7 @@ var playerSchema = new mongoose.Schema({
 	pol_resistance:   { type: Boolean, default: false }, // (10) – Available political points are spent on a 1-to-1 ratio to mitigate invasion collateral damage. Cannot be researched by Borg or Klingons.
 	ultra_science:    { type: Boolean, default: false }, // (20) – Can be researched multiple times to give you 5 victory points per level.
 
-	standing:        { type: String}// Standing with minor races 
+	standing:        { type: String},// Standing with minor races 
 	//Credits may be converted to industry at a rate of 3 to 1.
 
 	// AT WAR
@@ -64,6 +71,12 @@ var playerSchema = new mongoose.Schema({
 	//Klingon Empire (K) 
 	//Romulan Star Empire (R) 
 	//United Federation of Planets (U) 
+
+	agreements: [agreementSchema],
+	bases: [baseSchema],
+	diplomatic_nogations: [diplomatic_nogationSchema],
+	ships: [shipSchema],
+	game: gameSchema
 });
 
 module.exports = mongoose.model('Player', playerSchema);
