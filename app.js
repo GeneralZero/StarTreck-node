@@ -12,7 +12,8 @@ var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
-var io = require('./game_server');
+var game_server = require('./game_server');
+var socketio = require('socket.io');
 
 var MongoStore = require('connect-mongo')({ session: session });
 var flash = require('express-flash');
@@ -53,6 +54,10 @@ mongoose.connect(secrets.db);
 mongoose.connection.on('error', function() {
   console.error('✗ MongoDB Connection Error. Please make sure MongoDB is running.');
 });
+var sessionStore = new MongoStore({
+    url: secrets.db,
+    auto_reconnect: true
+  })
 
 /**
  * Express configuration.
@@ -82,10 +87,7 @@ app.use(methodOverride());
 app.use(cookieParser());
 app.use(session({
   secret: secrets.sessionSecret,
-  store: new MongoStore({
-    url: secrets.db,
-    auto_reconnect: true
-  })
+  store: sessionStore
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -188,6 +190,31 @@ var server = https.createServer(secrets.certs, app).listen(app.get('port'), func
 });
 
 //Setup socket.io Server
-var game_server = io.listen(server);
+var io = socketio.listen(server)
+
+io.configure(function (){
+  io.set('authorization', function (data, accept) {
+      if (data.headers.cookie) {
+          console.log(data.headers.cookie);
+          data.sessionID = data.cookie['express.sid'];
+          // (literally) get the session data from the session store
+          sessionStore.get(data.sessionID, function (err, session) {
+              if (err || !session) {
+                  // if we cannot grab a session, turn down the connection
+                  accept('Error', false);
+              } else {
+                  // save the session data and accept the connection
+                  data.session = session;
+                  accept(null, true);
+              }
+          });
+      } else {
+         return accept('No cookie transmitted.', false);
+      }
+  });
+});
+
+
+game_server.init(io);
 
 module.exports = app;
