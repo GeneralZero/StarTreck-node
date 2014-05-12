@@ -189,31 +189,16 @@ var server = https.createServer(secrets.certs, app).listen(app.get('port'), func
   console.log("✔ Express server listening on port %d in %s mode", app.get('port'), app.get('env'));
 });
 
+function parseCookie(cookiestring){
+  var ret = {};
+  cookiearray = cookiestring.split(";");
+  for (var i = 0; i < cookiearray.length; i++) {
+    ret[cookies]
+  };
+}
+
 //Setup socket.io Server
 var io = socketio.listen(server)
-
-io.configure(function (){
-  io.set('authorization', function (data, accept) {
-      if (data.headers.cookie) {
-          console.log(data.headers.cookie);
-          data.sessionID = data.cookie['express.sid'];
-          // (literally) get the session data from the session store
-          sessionStore.get(data.sessionID, function (err, session) {
-              if (err || !session) {
-                  // if we cannot grab a session, turn down the connection
-                  accept('Error', false);
-              } else {
-                  // save the session data and accept the connection
-                  data.session = session;
-                  accept(null, true);
-              }
-          });
-      } else {
-         return accept('No cookie transmitted.', false);
-      }
-  });
-});
-
 
 game_server.init(io);
 
