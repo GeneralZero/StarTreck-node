@@ -5,10 +5,6 @@ var gameSchema = require('./models/game');
 var playerSchema = require('./models/player');
 var UserSchema = require('./models/User');
 
-//Get Cookie return User
-function verifyUserCookie (cookies){
-	console.log(cookies);
-}
 
 function loadRequestedData (user) {
 	//Verify User's Cookie
@@ -28,9 +24,8 @@ function endOfTurn(user, data){
 	//Signal Next Turn
 }
 
-module.exports.init = function(io){
-	//Occures when get new user
-	io.sockets.on('connection', function (socket) {
+module.exports.init = function(sessionSockets){
+	sessionSockets.on('connection', function (err, socket, session) {
 		console.log(socket.id);
 		//var user = verifyUserCookie(socket.handshake.headers.cookie);
 
@@ -58,5 +53,6 @@ module.exports.init = function(io){
 						}
 				}
 		]);
+
 	});
 }

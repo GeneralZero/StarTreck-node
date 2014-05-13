@@ -2,8 +2,6 @@
  * GET /
  * Home page.
  */
-
-
 var crypto = require('crypto');
 
 exports.game = function(req, res) {
