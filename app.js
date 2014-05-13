@@ -197,6 +197,7 @@ var io = socketio.listen(server);
 var SessionSockets = require('session.socket.io')
   , sessionSockets = new SessionSockets(io, sessionStore, cookieParser);
 
-game_server.init(sessionSockets);
+console.log(sessionSockets);
+game_server.init(io, sessionSockets);
 
 module.exports = app;

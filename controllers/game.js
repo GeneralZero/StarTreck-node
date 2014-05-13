@@ -2,7 +2,6 @@
  * GET /
  * Home page.
  */
-var crypto = require('crypto');
 
 exports.game = function(req, res) {
   if (!req.user) return res.redirect('/login');
