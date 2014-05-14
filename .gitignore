@@ -5,6 +5,9 @@ lib-cov
 *.dat
 *.out
 *.pid
+*.ico
+*.key
+*.crt
 *.gz
 *.swp
 

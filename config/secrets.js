@@ -15,8 +15,11 @@
  * If you have already commited this file to GitHub with your keys, then
  * refer to https://help.github.com/articles/remove-sensitive-data
 */
+var fs = require('fs');
 
 module.exports = {
+
+  certs: { key: fs.readFileSync('./ssl/node.key'), cert: fs.readFileSync('./ssl/node.crt')},
 
   db: process.env.MONGODB|| 'mongodb://localhost:27017/test',
 
