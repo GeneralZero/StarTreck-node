@@ -510,8 +510,8 @@ exports.getLinkedin = function(req, res, next) {
 exports.getInstagram = function(req, res, next) {
   var token = _.findWhere(req.user.tokens, { kind: 'instagram' });
 
-  ig.use({ access_token: token });
   ig.use({ client_id: secrets.instagram.clientID, client_secret: secrets.instagram.clientSecret });
+  ig.use({ access_token: token.accessToken });
 
   async.parallel({
     searchByUsername: function(done) {
@@ -521,7 +521,6 @@ exports.getInstagram = function(req, res, next) {
     },
     searchByUserId: function(done) {
       ig.user('175948269', function(err, user) {
-        console.log(user);
         done(err, user);
       });
     },
@@ -529,28 +528,20 @@ exports.getInstagram = function(req, res, next) {
       ig.media_popular(function(err, medias) {
         done(err, medias);
       });
+    },
+    myRecentMedia: function(done) {
+      ig.user_self_media_recent(function(err, medias, pagination, limit) {
+        done(err, medias);
+      });
     }
-  },
-  function(err, results) {
+  }, function(err, results) {
+    if (err) return next(err);
     res.render('api/instagram', {
       title: 'Instagram API',
       usernames: results.searchByUsername,
       userById: results.searchByUserId,
-      popularImages: results.popularImages
+      popularImages: results.popularImages,
+      myRecentMedia: results.myRecentMedia
     });
   });
-};
-
-exports.postInstagram = function(req, res, next) {
-  var token = _.findWhere(req.user.tokens, { kind: 'instagram' });
-
-  ig.use({ access_token: token });
-  ig.use({ client_id: secrets.instagram.clientID, client_secret: secrets.instagram.clientSecret });
-
-
-
-  ig.user_search('13reasons', function(err, users, limit) {
-    console.log(users);
-  });
-
 };

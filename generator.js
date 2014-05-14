@@ -30,7 +30,7 @@ inquirer.prompt({
       type: 'list',
       name: 'email',
       message: 'Choose Email Delivery Service:',
-      choices: ['SendGrid', 'Mailgun', 'Cancel']
+      choices: ['SendGrid', 'Mailgun', 'Mandrill', 'Cancel']
     }, function(answer) {
 
       var index;
@@ -55,7 +55,7 @@ inquirer.prompt({
         userController.splice(index + 1, 1, '        service: \'SendGrid\',');
         userController.splice(index + 3, 1, '          user: secrets.sendgrid.user,');
         userController.splice(index + 4, 1, '          pass: secrets.sendgrid.password');
-        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {', 1);
+        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {', (index + 1));
         userController.splice(index + 1, 1, '        service: \'SendGrid\',');
         userController.splice(index + 3, 1, '          user: secrets.sendgrid.user,');
         userController.splice(index + 4, 1, '          pass: secrets.sendgrid.password');
@@ -78,13 +78,36 @@ inquirer.prompt({
         userController.splice(index + 1, 1, '        service: \'Mailgun\',');
         userController.splice(index + 3, 1, '          user: secrets.mailgun.login,');
         userController.splice(index + 4, 1, '          pass: secrets.mailgun.password');
-        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {', 1);
+        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {', (index + 1));
         userController.splice(index + 1, 1, '        service: \'Mailgun\',');
         userController.splice(index + 3, 1, '          user: secrets.mailgun.login,');
         userController.splice(index + 4, 1, '          pass: secrets.mailgun.password');
         fs.writeFileSync(userControllerFile, userController.join(os.EOL));
 
         console.log('✓ Email Delivery Service has been switched to'.info, '@'.error + 'mail'.data + 'gun'.error);
+      }
+
+      if (answer.email.match('Mandrill')) {
+
+        // Change SMPT Transport to Mailgun in controllers/contact.js
+        index = contactController.indexOf('var smtpTransport = nodemailer.createTransport(\'SMTP\', {');
+        contactController.splice(index + 1, 1, '  service: \'Mandrill\',');
+        contactController.splice(index + 3, 1, '       user: secrets.mandrill.login,');
+        contactController.splice(index + 4, 1, '       pass: secrets.mandrill.password');
+        fs.writeFileSync(contactControllerFile, contactController.join(os.EOL));
+
+        // Change SMPT Transport to Mailgun in controllers/user.js
+        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {');
+        userController.splice(index + 1, 1, '        service: \'Mandrill\',');
+        userController.splice(index + 3, 1, '          user: secrets.mandrill.login,');
+        userController.splice(index + 4, 1, '          pass: secrets.mandrill.password');
+        index = userController.indexOf('      var smtpTransport = nodemailer.createTransport(\'SMTP\', {', (index + 1));
+        userController.splice(index + 1, 1, '        service: \'Mandrill\',');
+        userController.splice(index + 3, 1, '          user: secrets.mandrill.login,');
+        userController.splice(index + 4, 1, '          pass: secrets.mandrill.password');
+        fs.writeFileSync(userControllerFile, userController.join(os.EOL));
+
+        console.log('✓ Email Delivery Service has been switched to'.info, 'Mandrill'.help);
       }
     });
   }
@@ -150,7 +173,7 @@ inquirer.prompt({
 
         passport.use(new FacebookStrategy(secrets.facebook, function(req, accessToken, refreshToken, profile, done) {
           if (req.user) {
-            User.findOne({ $or: [{ facebook: profile.id }, { email: profile.email }] }, function(err, existingUser) {
+            User.findOne({ facebook: profile.id }, function(err, existingUser) {
               if (existingUser) {
                 req.flash('errors', { msg: 'There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
                 done(err);
@@ -297,7 +320,7 @@ inquirer.prompt({
 
         passport.use(new GitHubStrategy(secrets.github, function(req, accessToken, refreshToken, profile, done) {
           if (req.user) {
-            User.findOne({ $or: [{ github: profile.id }, { email: profile.email }] }, function(err, existingUser) {
+            User.findOne({ github: profile.id }, function(err, existingUser) {
               if (existingUser) {
                 req.flash('errors', { msg: 'There is already a GitHub account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
                 done(err);
@@ -446,7 +469,7 @@ inquirer.prompt({
 
         passport.use(new GoogleStrategy(secrets.google, function(req, accessToken, refreshToken, profile, done) {
           if (req.user) {
-            User.findOne({ $or: [{ google: profile.id }, { email: profile.email }] }, function(err, existingUser) {
+            User.findOne({ google: profile.id }, function(err, existingUser) {
               if (existingUser) {
                 req.flash('errors', { msg: 'There is already a Google account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
                 done(err);
@@ -735,10 +758,7 @@ inquirer.prompt({
 
         passport.use(new LinkedInStrategy(secrets.linkedin, function(req, accessToken, refreshToken, profile, done) {
           if (req.user) {
-            User.findOne({ $or: [
-              { linkedin: profile.id },
-              { email: profile._json.emailAddress }
-            ] }, function(err, existingUser) {
+            User.findOne({ linkedin: profile.id }, function(err, existingUser) {
               if (existingUser) {
                 req.flash('errors', { msg: 'There is already a LinkedIn account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
                 done(err);
@@ -900,7 +920,7 @@ inquirer.prompt({
 
         passport.use(new InstagramStrategy(secrets.instagram,function(req, accessToken, refreshToken, profile, done) {
           if (req.user) {
-            User.findOne({ $or: [{ instagram: profile.id }, { email: profile.email }] }, function(err, existingUser) {
+            User.findOne({ instagram: profile.id }, function(err, existingUser) {
               if (existingUser) {
                 req.flash('errors', { msg: 'There is already an Instagram account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
                 done(err);
@@ -929,7 +949,7 @@ inquirer.prompt({
               // Similar to Twitter API, assigns a temporary e-mail address
               // to get on with the registration process. It can be changed later
               // to a valid e-mail address in Profile Management.
-              profile.username + "@instagram.com";
+              user.email = profile.username + "@instagram.com";
               user.profile.website = profile._json.data.website;
               user.profile.picture = profile._json.data.profile_picture;
               user.save(function(err) {

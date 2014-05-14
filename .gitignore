@@ -9,9 +9,16 @@ lib-cov
 *.key
 *.crt
 *.gz
-node_modules
+*.swp
+
 pids
 logs
 results
+tmp
 
 npm-debug.log
+node_modules
+.idea
+*.iml
+.DS_Store
+Thumbs.db

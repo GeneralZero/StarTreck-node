@@ -1,3 +1,20 @@
+/**
+ * IMPORTANT NOTICE
+ *
+ * You should never commit this file to a public repository on GitHub!
+ * All public code on GitHub can be searched, that means anyone can see your
+ * uploaded secrets.js file.
+ *
+ * I did it for your convenience using "throw away" credentials so that
+ * all features could work out of the box.
+ *
+ * Untrack secrets.js from Git before pushing your code to GitHub:
+ *
+ * git rm --cached config/secrets.js
+ *
+ * If you have already commited this file to GitHub with your keys, then
+ * refer to https://help.github.com/articles/remove-sensitive-data
+*/
 var fs = require('fs');
 
 module.exports = {
@@ -11,6 +28,11 @@ module.exports = {
   mailgun: {
     login: process.env.MAILGUN_LOGIN || 'postmaster@sandbox697fcddc09814c6b83718b9fd5d4e5dc.mailgun.org',
     password: process.env.MAILGUN_PASSWORD || '29eldds1uri6'
+  },
+  
+  mandrill: {
+    login: process.env.MANDRILL_LOGIN || 'hackathonstarterdemo',
+    password: process.env.MANDRILL_PASSWORD || 'E1K950_ydLR4mHw12a0ldA'
   },
 
   sendgrid: {
@@ -31,6 +53,13 @@ module.exports = {
     clientID: process.env.FACEBOOK_ID || '754220301289665',
     clientSecret: process.env.FACEBOOK_SECRET || '41860e58c256a3d7ad8267d3c1939a4a',
     callbackURL: '/auth/facebook/callback',
+    passReqToCallback: true
+  },
+
+  instagram: {
+    clientID: process.env.INSTAGRAM_ID || '9f5c39ab236a48e0aec354acb77eee9b',
+    clientSecret: process.env.INSTAGRAM_SECRET || '5920619aafe842128673e793a1c40028',
+    callbackURL: '/auth/instagram/callback',
     passReqToCallback: true
   },
 

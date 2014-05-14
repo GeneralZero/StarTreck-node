@@ -1,5 +1,5 @@
 ![Alt](https://lh4.googleusercontent.com/-PVw-ZUM9vV8/UuWeH51os0I/AAAAAAAAD6M/0Ikg7viJftQ/w1286-h566-no/hackathon-starter-logo.jpg)
-Hackathon Starter 2.0.2 [![Dependency Status](https://david-dm.org/sahat/hackathon-starter.svg?theme=shields.io)](https://david-dm.org/sahat/hackathon-starter) [![Build Status](https://travis-ci.org/sahat/hackathon-starter.svg?branch=master)](https://travis-ci.org/sahat/hackathon-starter) [![Analytics](https://ga-beacon.appspot.com/UA-47447818-2/hackathon-starter?pixel)](https://github.com/igrigorik/ga-beacon)
+Hackathon Starter 2.0.4 [![Dependency Status](https://david-dm.org/sahat/hackathon-starter.svg?theme=shields.io)](https://david-dm.org/sahat/hackathon-starter) [![Build Status](https://travis-ci.org/sahat/hackathon-starter.svg?branch=master)](https://travis-ci.org/sahat/hackathon-starter) [![Analytics](https://ga-beacon.appspot.com/UA-47447818-2/hackathon-starter?pixel)](https://github.com/igrigorik/ga-beacon)
 =======================
 
 <a href="https://github.com/sahat/hackathon-starter/zipball/master">
@@ -8,7 +8,7 @@ Hackathon Starter 2.0.2 [![Dependency Status](https://david-dm.org/sahat/hackath
   <img src="https://lh4.googleusercontent.com/-NXCLKSnPU60/U0xzuGt37_I/AAAAAAAAEBY/QjWLUHowgzY/w792-h272-no/Screenshot+2014-04-14+19.47.22.png" height="68">
 </a>
 
-Jump to [What's new in 2.0.2?](#changelog)
+Jump to [What's new in 2.0.4?](#changelog)
 
 A boilerplate for **Node.js** web applications.
 
@@ -74,7 +74,7 @@ Features
 - Rails 3.1-style asset pipeline by connect-assets (See FAQ)
 - LESS stylesheets (auto-compiled without any Gulp/Grunt hassle)
 - Bootstrap 3 + Flat UI + iOS7
-- Contact Form (powered by Mailgun or Sendgrid)
+- Contact Form (powered by Mailgun, Sendgrid or Mandrill)
 - **Account Management**
  - Gravatar
  - Profile Details
@@ -302,6 +302,15 @@ The same goes for other providers.
 - Go to http://www.mailgun.com
 - Sign up and add your *Domain Name*
 - From the domain overview, copy and paste the default SMTP *Login* and *Password* into `config/secrets.js`
+
+<hr>
+
+<img src="http://cdn.appstorm.net/web.appstorm.net/web/files/2013/12/mandrill-logo.png" width="100">
+- Go to http://mandrill.com
+- Sign up and add your *Domain Name*
+- From the dashboard, click on *Get SMTP credentials*
+- Copy and paste the default SMTP *Login* and *Password* into `config/secrets.js`
+
 
 Project Structure
 -----------------
@@ -602,7 +611,28 @@ reference guide. I have explained my reasons why it could not be merged in
 ### How do I switch SendGrid for another email delivery service?
 Run `node generator.js` bundled with Hackathon Starter, then select
 **Email Service** option. It will automatically replace appropriate strings in
-your code. Currently there are only two options: SendGrid and Mailgun.
+your code. Currently there are three options: SendGrid, Mandrill, and Mailgun.
+
+### Can I use Sass instead of LESS stylesheets?
+Yes you can! Although you will have to manually convert all existing stylesheets
+to Sass, which shouldn't be too hard considering how similar Sass and LESS are.
+Simply rename `styles.less` to `styles.scss` and **connect-assets** will
+automatically use Sass preprocessor.
+
+Your are not limited to just Sass *or* LESS, you could use both if you want to.
+In **layout.jade** simply specify LESS and Sass stylesheets separately:
+```jade
+!= css('styles') # public/css/styles.less
+!= css('my_sass_styles') # public/css/my_sass_styles.scss
+```
+
+And as I already mentioned you do not need to specify the file extension,
+**connect-assets** will automatically figure out which CSS preprocessor to use
+based on the filetype.
+
+**Note:** I did not include `node-sass` module in *package.json*, so you will
+have to install it yourself by running `npm install --save node-sass`.
+
 
 How It Works (mini guides)
 --------------------------
@@ -1112,6 +1142,18 @@ Add this to `package.json`, after *name* and *version*. This is necessary becaus
 
 Changelog
 ---------
+
+### 2.0.4 (April 26, 2014)
+- Added Mandrill e-mail service (via generator)
+
+### 2.0.3 (April 25, 2014)
+- LinkedIn API: Fixed an error if a user did not specify education on LinkedIn
+- Removed email constraint when linking OAuth accounts in order to be able to merge accounts that use the same email address
+- Check if email address is already taken when creating a new local account
+ - Previously relied on Validation Error 11000, which doesn't always work
+- When creating a local account, checks if e-mail address is already taken
+- Flash notifications can now be dismissed by clicking on ×
+
 ### 2.0.2 (April 22, 2014)
 - Added Instagram Authentication
 - Added Instagram API example
