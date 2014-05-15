@@ -23,11 +23,11 @@ function endOfTurn(user, data){
 }
 
 exports.init = function(io, sessionSockets){
-	sessionSockets.on('connection', function (err, socket, session) {
-		socket.emit('session', session);
+	io.on('connection',  function (socket) {
+		socket.emit('session', { hello: 'world' });
 
-		socket.on('foo', function(value) {
-			console.log(value);
+		socket.on('foo', function (data) {
+			console.log(data);
 		});
 	});
 }

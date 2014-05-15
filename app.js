@@ -194,9 +194,6 @@ var server = https.createServer(secrets.certs, app).listen(app.get('port'), func
  */
 var io = socketio.listen(server);
 
-var SessionSockets = require('session.socket.io')
-  , sessionSockets = new SessionSockets(io, sessionStore, cookieParser);
-
-game_server.init(io, sessionSockets);
+game_server.init(io, null);
 
 module.exports = app;
