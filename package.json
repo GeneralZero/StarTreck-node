@@ -48,7 +48,7 @@
     "passport-oauth": "^1.0.0",
     "passport-twitter": "^1.0.2",
     "request": "^2.34.0",
-    "session.socket.io": "latest",
+    "session.socket.io": "https://github.com/eiriklv/session.socket.io/tarball/master",
     "socket.io": "latest",
     "stripe": "^2.5.5",
     "tumblr.js": "^0.0.4",
