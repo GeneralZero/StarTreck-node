@@ -17,7 +17,7 @@ socket.on('session', function (session) {
 	console.log(JSON.stringify(session));
 });
 
-socket.emit('foo', this.value);
+socket.emit('foo', 'HI');
 
 
 $(document).ready(function() {

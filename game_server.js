@@ -27,9 +27,7 @@ exports.init = function(io, sessionSockets){
 		socket.emit('session', session);
 
 		socket.on('foo', function(value) {
-			session.foo = value;
-			session.save();
-			socket.emit('session', session);
+			console.log(value);
 		});
 	});
 }
