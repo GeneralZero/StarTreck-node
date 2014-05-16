@@ -1,129 +1,66 @@
 //Initalize Socket.io
-/*var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+var session;
 
-socket.on('session', function (session){
-	console.log(session);
-})
-
-socket.on('get_board_data', function (data) {
-	for(var entity in data){
-		console.log(data[entity]);
-	}
-});*/
-
-var socket = io.connect();
-
-socket.on('session', function (session) {
-	console.log(JSON.stringify(session));
+socket.on('session', function (data) {
+	console.log(JSON.stringify(data));
+	session = data;
 });
 
-socket.emit('foo', 'HI');
+socket.on('update_board' function(data){
+	renderBoard(data);
+})
+
+
+
+
+//Socket.io Game Functions
 
 
 $(document).ready(function() {
-
-
-
-
-	/*
+	//Initlize Phaser
 	var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
-	var universe = {};
+
+	//Initalize Global Varables
+	var map = [];
+	var sprite_size = [32, 32];
+
 
 	function preload() {
+		//Preload All files
 
-		game.load.tilemap('universe', 'assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON);
+		//Sprite files
 
-		game.load.image('ground_1x1', 'assets/tilemaps/tiles/ground_1x1.png');
-		game.load.image('walls_1x2', 'assets/tilemaps/tiles/walls_1x2.png');
-		game.load.image('tiles2', 'assets/tilemaps/tiles/tiles2.png');
-
-		game.load.image('phaser', 'assets/sprites/arrow.png');
-		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
-
+		//Sounds
 	}
 
-	var cursors;
-	var coins;
-
-	var layer;
-	var sprite;
-
 	function create() {
+		socket.emit('getBoardState', session);
 
-		universe.map = game.add.tilemap('universe');
-
-		universe.map.addTilesetImage('ground_1x1');
-		universe.map.addTilesetImage('walls_1x2');
-		universe.map.addTilesetImage('tiles2');
-
-		universe.map.setCollisionBetween(1, 12);
-
-		layer = universe.map.createLayer('Tile Layer 1');
-
-		layer.resizeWorld();
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-
-		//  Here we create our coins group
-		coins = game.add.group();
-		coins.enableBody = true;
-
-		//  And now we convert all of the Tiled objects with an ID of 34 into sprites within the coins group
-		universe.map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
-
-		//  Add animations to all of the coin sprites
-		coins.callAll('animations.add', 'animations', 'spin', [0, 1, 2, 3, 4, 5], 10, true);
-		coins.callAll('animations.play', 'animations', 'spin');
-
-		sprite = game.add.sprite(260, 100, 'phaser');
-		sprite.anchor.set(0.5);
-
-		game.physics.arcade.enable(sprite);
-
-		//  This adjusts the collision body size.
-		sprite.body.setSize(32, 32, 16, 16);
-
-		//  We'll set a lower max angular velocity here to keep it from going totally nuts
-		sprite.body.maxAngular = 500;
-
-		//  Apply a drag otherwise the sprite will just spin and never slow down
-		sprite.body.angularDrag = 50;
-
-		game.camera.follow(sprite);
-
-		cursors = game.input.keyboard.createCursorKeys();
 	}
 
 	function update() {
-		//Load Visable Planets
-
-		//Load Visable
-
-		game.physics.arcade.collide(sprite, layer);
-		game.physics.arcade.overlap(sprite, coins, collectCoin, null, this);
-
-		sprite.body.velocity.x = 0;
-		sprite.body.velocity.y = 0;
-		sprite.body.angularVelocity = 0;
-
-		if (cursors.left.isDown)
-		{
-			sprite.body.angularVelocity = -300;
-		}
-		else if (cursors.right.isDown)
-		{
-			sprite.body.angularVelocity = 300;
-		}
-
-		if (cursors.up.isDown)
-		{
-			game.physics.arcade.velocityFromAngle(sprite.angle, 300, sprite.body.velocity);
-		}
 
 	}
 
-	function renderBoard(){
-		//On input Update board
+	function renderBoard(data){
+		for (var i = data.length - 1; i >= 0; i--) {
+			if(data[i].type == ""){
+
+			}
+			else if(data[i].type == ""){
+
+			}
+			else if(data[i].type == ""){
+				
+			}
+			else if(data[i].type == ""){
+				
+			}
+			else if(data[i].type == ""){
+				
+			}
+		};
 
 		//Render the Board
 
@@ -144,12 +81,9 @@ $(document).ready(function() {
 	}
 
 	function render() {
+		renderBoard();
 
-		renderBoard()
-
-		renderSidebar()
-
-		game.debug.body(sprite);
+		renderSidebar();
 
 	}
 
@@ -160,6 +94,33 @@ $(document).ready(function() {
 	function getBoardState(){
 		
 	}
-	*/
 
+	function add_sprite_to_board(game, entity_name, location){
+		//This sprite is using a texture atlas for all of its animation data
+		var entity = game.add.sprite(location.x, location.y, entity_name);
+
+		//Here we add a new animation called 'run'
+		//We haven't specified any frames because it's using every frame in the texture atlas
+		entity.animations.add('still');
+
+		//And this starts the animation playing by using its key ("run")
+		//15 is the frame rate (15fps)
+		//true means it will loop when it finishes
+		entity.animations.play('still', 15, true);
+
+		//Callback Function for Click
+		entity.events.onInputDown.add(listener, this);
+
+		return entity;
+	}
+
+	function swap_textures(sprite, new_texture, animation_key){
+		// To load the new texture (('key', frame))
+		sprite.loadTexture(new_texture, 0);
+		// Adding an animation ( 'key' )
+		sprite.animations.add(animation_key);
+		// To play the animation with the new texture ( 'key', frameRate, loop, killOnComplete)
+		sprite.animations.play(animation_key, 7, false, true);
+	}
+	
 });
