@@ -35,7 +35,7 @@ $(document).ready(function() {
 	}
 
 	function create() {
-		socket.emit('getBoardState', session);
+		socket.emit('getBoardState');
 
 	}
 
