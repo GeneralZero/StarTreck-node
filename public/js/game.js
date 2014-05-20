@@ -1,5 +1,5 @@
 //Initalize Socket.io
-var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+var socket = io.connect();
 var session;
 
 socket.on('session', function (data) {
@@ -7,7 +7,7 @@ socket.on('session', function (data) {
 	session = data;
 });
 
-socket.on('update_board' function(data){
+socket.on('update_board', function(data){
 	renderBoard(data);
 })
 

@@ -1,7 +1,7 @@
 //Game Database Dependencies
-var gameSchema = require('./models/game');
-var playerSchema = require('./models/player');
-var UserSchema = require('./models/User');
+var game = require('./models/game');
+var player = require('./models/player');
+var User = require('./models/User');
 
 
 function loadRequestedData (user) {
@@ -22,12 +22,29 @@ function endOfTurn(user, data){
 	//Signal Next Turn
 }
 
-exports.init = function(io, sessionSockets){
-	io.on('connection',  function (socket) {
-		socket.emit('session', { hello: 'world' });
+var players = [];
 
-		socket.on('foo', function (data) {
-			console.log(data);
-		});
+var gameID = 1;
+
+
+exports.init = function(io, sessionSockets, db){
+	sessionSockets.on('connection', function (err, socket, session) {
+		if(err){
+
+		}
+		else{
+			if(session){
+				socket.emit('session', session.passport);
+				User.findById(session.passport, function (err, user) {
+					console.log(user);
+				});
+			}
+
+			User.find({_id:session.passport})
+
+			socket.on('getBoardState', function(value) {
+				console.log(value);
+			});
+		}
 	});
 }
