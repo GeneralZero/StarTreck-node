@@ -1,6 +1,9 @@
 //Game Database Dependencies
-var Game = require('./models/game');
-var Player = require('./models/player');
+
+var mongoose = require('mongoose');
+
+var Game = mongoose.model('Game', require('./models/game'));
+var Player = mongoose.model('Player', require('./models/player'));
 var User = require('./models/User');
 
 
@@ -10,6 +13,10 @@ function loadRequestedData (user) {
 	//getVisableSquares()
 
 	//GetData on visable squares
+}
+
+function generateNewBoard(){
+
 }
 
 function endOfTurn(user, data){
@@ -41,13 +48,33 @@ exports.init = function(io, sessionSockets, db){
 			User.findById(session.passport.user, function (err, user) {
 				console.log("User: " + user);
 
+				//Get current Game by ID
 				if(user.games.length == 0){
-					var current_game = new Game({id:gameID});
-					user.games.push(current_game)
+					var current_game = new Game();
+					var current_player = new Player();
+
+					//current_game.save();
+					//current_player.save();
+
+					user.games.push({id:current_game.id, game: current_game, player: current_player});
+
+					user.save();
 				}
 				else{
-
+					for (var i = 0; i < user.games.length; i++) {
+						if(user.games[i].id == gameID){
+							Game.findByID(user.games[i].id, function(err, data){
+								var current_game = data;
+							});
+							var current_player = user.games[i].player;
+							break;
+						}
+					};
 				}
+
+				//Have Game and player
+
+
 
 			});
 			

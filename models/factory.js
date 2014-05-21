@@ -9,6 +9,6 @@ var factorySchema = new mongoose.Schema({
 	published: { type: Boolean, default: false, index: true }
 });
 
-module.exports = mongoose.model('Factory', factorySchema);
+module.exports = factorySchema;
 
 

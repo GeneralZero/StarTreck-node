@@ -10,7 +10,6 @@ var shipSchema = require('./ship');
 var playerSchema = new mongoose.Schema({
 	title:           { type: String},
 	current_id:      { type: String},
-	id:              { type: String},
 	is_admin:        { type: Boolean, default: false },
 	race:            { type: String},
 	power:           { type: String},
@@ -79,6 +78,6 @@ var playerSchema = new mongoose.Schema({
 	game: gameSchema
 });
 
-module.exports = mongoose.model('Player', playerSchema);
+module.exports = playerSchema;
 
 

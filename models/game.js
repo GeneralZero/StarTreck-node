@@ -7,7 +7,6 @@ var playerSchema = require('./player');
 
 var gameSchema = new mongoose.Schema({
 	title:     { type: String },
-	id:        { type: String },
 	content:   { type: String },
 	date:      { type: Date,    default: function () { return new Date;} },
 	published: { type: Boolean, default: false, index: true },
@@ -15,4 +14,4 @@ var gameSchema = new mongoose.Schema({
 	board: [boardSchema]
 });
 
-module.exports = mongoose.model('Game', gameSchema);
+module.exports = gameSchema;

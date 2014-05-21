@@ -4,7 +4,7 @@ var crypto = require('crypto');
 
 //Game Includes
 var gameSchema = require('./game');
-var playerSchema = require('./player')
+var playerSchema = require('./player');
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
@@ -26,8 +26,11 @@ var userSchema = new mongoose.Schema({
     picture: { type: String, default: '' }
   },
 
-  games: [gameSchema],
-  players: [playerSchema],
+  games: {
+    id: String,
+    game: mongoose.Schema.ObjectId,
+    player: mongoose.Schema.ObjectId
+  },
 
   resetPasswordToken: String,
   resetPasswordExpires: Date
