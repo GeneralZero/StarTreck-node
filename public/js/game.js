@@ -1,5 +1,5 @@
 //Initalize Socket.io
-/*var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
+var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
 
 socket.on('session', function (session){
 	console.log(session);
@@ -9,117 +9,50 @@ socket.on('get_board_data', function (data) {
 	for(var entity in data){
 		console.log(data[entity]);
 	}
-});*/
-
-var socket = io.connect();
-
-socket.on('session', function (session) {
-	console.log(JSON.stringify(session));
 });
 
-socket.emit('foo', 'HI');
-
-
 $(document).ready(function() {
-
-
-
-
-	/*
-	var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
+	var game = new Phaser.Game(1024, 32*20, Phaser.AUTO, 'canvas', { preload: preload, create: create });
 	var universe = {};
 
+	var box_size = [32,32];
+	var planets = {};
+
+	game.state.add('Boot', BallonBears.Boot);
+	game.state.add('Preloader', BallonBears.Preloader);
+	game.state.add('MainMenu', BallonBears.MainMenu);
+	game.state.add('Shop', BallonBears.Shop);
+	game.state.add('Game', BallonBears.Game);
+	game.state.add('Score', BallonBears.Score);
+
 	function preload() {
-
-		game.load.tilemap('universe', 'assets/tilemaps/maps/features_test.json', null, Phaser.Tilemap.TILED_JSON);
-
-		game.load.image('ground_1x1', 'assets/tilemaps/tiles/ground_1x1.png');
-		game.load.image('walls_1x2', 'assets/tilemaps/tiles/walls_1x2.png');
-		game.load.image('tiles2', 'assets/tilemaps/tiles/tiles2.png');
-
-		game.load.image('phaser', 'assets/sprites/arrow.png');
 		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
-
 	}
 
-	var cursors;
-	var coins;
-
-	var layer;
-	var sprite;
-
 	function create() {
+		//this.state.start('MainMenu');
+		
+		planets = game.add.group();
 
-		universe.map = game.add.tilemap('universe');
+		for (var i = 20; i >= 0; i--) {
+			var planet = planets.create(i*box_size[0], i*box_size[1], 'coin');
+			//Set Attributies
 
-		universe.map.addTilesetImage('ground_1x1');
-		universe.map.addTilesetImage('walls_1x2');
-		universe.map.addTilesetImage('tiles2');
+			//Set Animations
+			planet.animations.add('walk');
+			planet.animations.play('walk', 10, true);
 
-		universe.map.setCollisionBetween(1, 12);
-
-		layer = universe.map.createLayer('Tile Layer 1');
-
-		layer.resizeWorld();
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-
-		//  Here we create our coins group
-		coins = game.add.group();
-		coins.enableBody = true;
-
-		//  And now we convert all of the Tiled objects with an ID of 34 into sprites within the coins group
-		universe.map.createFromObjects('Object Layer 1', 34, 'coin', 0, true, false, coins);
-
-		//  Add animations to all of the coin sprites
-		coins.callAll('animations.add', 'animations', 'spin', [0, 1, 2, 3, 4, 5], 10, true);
-		coins.callAll('animations.play', 'animations', 'spin');
-
-		sprite = game.add.sprite(260, 100, 'phaser');
-		sprite.anchor.set(0.5);
-
-		game.physics.arcade.enable(sprite);
-
-		//  This adjusts the collision body size.
-		sprite.body.setSize(32, 32, 16, 16);
-
-		//  We'll set a lower max angular velocity here to keep it from going totally nuts
-		sprite.body.maxAngular = 500;
-
-		//  Apply a drag otherwise the sprite will just spin and never slow down
-		sprite.body.angularDrag = 50;
-
-		game.camera.follow(sprite);
-
-		cursors = game.input.keyboard.createCursorKeys();
+			//Set Drags
+			planet.inputEnabled = true;
+			planet.input.enableDrag();
+			planet.input.enableSnap(box_size[0], box_size[1], false, true);
+		}
 	}
 
 	function update() {
 		//Load Visable Planets
 
 		//Load Visable
-
-		game.physics.arcade.collide(sprite, layer);
-		game.physics.arcade.overlap(sprite, coins, collectCoin, null, this);
-
-		sprite.body.velocity.x = 0;
-		sprite.body.velocity.y = 0;
-		sprite.body.angularVelocity = 0;
-
-		if (cursors.left.isDown)
-		{
-			sprite.body.angularVelocity = -300;
-		}
-		else if (cursors.right.isDown)
-		{
-			sprite.body.angularVelocity = 300;
-		}
-
-		if (cursors.up.isDown)
-		{
-			game.physics.arcade.velocityFromAngle(sprite.angle, 300, sprite.body.velocity);
-		}
-
 	}
 
 	function renderBoard(){
@@ -149,7 +82,7 @@ $(document).ready(function() {
 
 		renderSidebar()
 
-		game.debug.body(sprite);
+		game.debug.body();
 
 	}
 
@@ -160,6 +93,5 @@ $(document).ready(function() {
 	function getBoardState(){
 		
 	}
-	*/
 
 });
