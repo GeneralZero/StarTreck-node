@@ -8,6 +8,6 @@ var diplomatic_nogationsSchema = new mongoose.Schema({
 	published: { type: Boolean, default: false, index: true }
 });
 
-module.exports = mongoose.model('Diplomatic_Nogations', diplomatic_nogationsSchema);
+module.exports = diplomatic_nogationsSchema;
 
 

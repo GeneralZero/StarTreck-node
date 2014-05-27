@@ -14,5 +14,5 @@ var fleetSchema = new mongoose.Schema({
 	ships: [shipSchema]
 });
 
-module.exports = mongoose.model('Fleet', fleetSchema);
+module.exports = fleetSchema;
 

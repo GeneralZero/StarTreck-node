@@ -8,5 +8,5 @@ var baseSchema = new mongoose.Schema({
 	published: { type: Boolean, default: false, index: true }
 });
 
-module.exports = mongoose.model('Base', baseSchema);
+module.exports = baseSchema;
 
