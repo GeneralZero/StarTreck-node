@@ -12,18 +12,20 @@ socket.on('get_board_data', function (data) {
 });
 
 $(document).ready(function() {
-	var game = new Phaser.Game(1024, 32*20, Phaser.AUTO, 'canvas', { preload: preload, create: create });
+	var game = new Phaser.Game(1024, 32*21, Phaser.AUTO, 'canvas', { preload: preload, create: create });
 	var universe = {};
 
 	var box_size = [32,32];
-	var planets = {};
+	var top_labels = {"research": "Research Points:", "espionage": "Esponage Points:", "credits": "Credits:", "political": "Political Points:", "class": "Class:"}
 
+	/*
 	game.state.add('Boot', BallonBears.Boot);
 	game.state.add('Preloader', BallonBears.Preloader);
 	game.state.add('MainMenu', BallonBears.MainMenu);
 	game.state.add('Shop', BallonBears.Shop);
 	game.state.add('Game', BallonBears.Game);
 	game.state.add('Score', BallonBears.Score);
+	*/
 
 	function preload() {
 		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
@@ -31,16 +33,25 @@ $(document).ready(function() {
 
 	function create() {
 		//this.state.start('MainMenu');
+
+		//Initalize topbar
+		var topbar = game.add.graphics(0, 0);
+		topbar.beginFill(0x00008B, 1);
+		topbar.drawRect(0, 0, 1024, 32);
+
+		var sidebar = game.add.graphics(0, 0);
+		sidebar.beginFill(0x002387, 1);
+		sidebar.drawRect(32*20, 32, 1024, 32*21);
 		
 		planets = game.add.group();
 
 		for (var i = 20; i >= 0; i--) {
-			var planet = planets.create(i*box_size[0], i*box_size[1], 'coin');
+			var planet = planets.create(i*box_size[0], (i+1)*box_size[1], 'coin');
 			//Set Attributies
 
 			//Set Animations
-			planet.animations.add('walk');
-			planet.animations.play('walk', 10, true);
+			planet.animations.add('revolve');
+			planet.animations.play('revolve', 10, true);
 
 			//Set Drags
 			planet.inputEnabled = true;
