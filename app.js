@@ -193,7 +193,9 @@ var server = https.createServer(secrets.certs, app).listen(app.get('port'), func
  * Setup socket.io Server and Authorization
  */
 var io = socketio.listen(server);
+var SessionSockets = require('session.socket.io')
+  , sessionSockets = new SessionSockets(io, sessionStore, cookieParser());
 
-game_server.init(io, null);
+game_server.init(io, sessionSockets, mongoose.connection);
 
 module.exports = app;

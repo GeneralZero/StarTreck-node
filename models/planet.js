@@ -20,6 +20,6 @@ var planetSchema = new mongoose.Schema({
 	units: [unitSchema]
 });
 
-module.exports = mongoose.model('Planet', planetSchema);
+module.exports = planetSchema;
 
 

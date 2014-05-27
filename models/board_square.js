@@ -11,4 +11,4 @@ var board_squareSchema = new mongoose.Schema({
 	planet: [planetSchema]
 });
 
-module.exports = mongoose.model('Board_Square', board_squareSchema);
+module.exports = board_squareSchema;

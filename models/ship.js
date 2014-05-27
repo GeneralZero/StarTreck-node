@@ -20,6 +20,6 @@ var shipSchema = new mongoose.Schema({
 	hull:              { type: Number, default: 0 },
 });
 
-module.exports = mongoose.model('Ship', shipSchema);
+module.exports = shipSchema;
 
 

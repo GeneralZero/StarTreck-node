@@ -6,6 +6,6 @@ var research_proiritySchema = new mongoose.Schema({
 	timestamp: { type: Number,  default: Date.now },
 });
 
-module.exports = mongoose.model('Research Proirity', research_proiritySchema);
+module.exports = research_proiritySchema;
 
 
