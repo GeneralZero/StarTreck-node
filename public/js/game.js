@@ -1,66 +1,73 @@
 //Initalize Socket.io
-var socket = io.connect();
-var session;
+var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
 
-socket.on('session', function (data) {
-	console.log(JSON.stringify(data));
-	session = data;
-});
-
-socket.on('update_board', function(data){
-	renderBoard(data);
+socket.on('session', function (session){
+	console.log(session);
 })
 
-
-
-
-//Socket.io Game Functions
-
+socket.on('get_board_data', function (data) {
+	for(var entity in data){
+		console.log(data[entity]);
+	}
+});
 
 $(document).ready(function() {
-	//Initlize Phaser
-	var game = new Phaser.Game(1024, 768, Phaser.CANVAS, 'canvas', { preload: preload, create: create, update: update, render: render });
+	var game = new Phaser.Game(1024, 32*21, Phaser.AUTO, 'canvas', { preload: preload, create: create });
+	var universe = {};
 
-	//Initalize Global Varables
-	var map = [];
-	var sprite_size = [32, 32];
+	var box_size = [32,32];
+	var top_labels = {"research": "Research Points:", "espionage": "Esponage Points:", "credits": "Credits:", "political": "Political Points:", "class": "Class:"}
 
+	/*
+	game.state.add('Boot', BallonBears.Boot);
+	game.state.add('Preloader', BallonBears.Preloader);
+	game.state.add('MainMenu', BallonBears.MainMenu);
+	game.state.add('Shop', BallonBears.Shop);
+	game.state.add('Game', BallonBears.Game);
+	game.state.add('Score', BallonBears.Score);
+	*/
 
 	function preload() {
-		//Preload All files
-
-		//Sprite files
-
-		//Sounds
+		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
 	}
 
 	function create() {
-		socket.emit('getBoardState');
+		//this.state.start('MainMenu');
 
+		//Initalize topbar
+		var topbar = game.add.graphics(0, 0);
+		topbar.beginFill(0x00008B, 1);
+		topbar.drawRect(0, 0, 1024, 32);
+
+		var sidebar = game.add.graphics(0, 0);
+		sidebar.beginFill(0x002387, 1);
+		sidebar.drawRect(32*20, 32, 1024, 32*21);
+		
+		planets = game.add.group();
+
+		for (var i = 20; i >= 0; i--) {
+			var planet = planets.create(i*box_size[0], (i+1)*box_size[1], 'coin');
+			//Set Attributies
+
+			//Set Animations
+			planet.animations.add('revolve');
+			planet.animations.play('revolve', 10, true);
+
+			//Set Drags
+			planet.inputEnabled = true;
+			planet.input.enableDrag();
+			planet.input.enableSnap(box_size[0], box_size[1], false, true);
+		}
 	}
 
 	function update() {
+		//Load Visable Planets
 
+		//Load Visable
 	}
 
-	function renderBoard(data){
-		for (var i = data.length - 1; i >= 0; i--) {
-			if(data[i].type == ""){
-
-			}
-			else if(data[i].type == ""){
-
-			}
-			else if(data[i].type == ""){
-				
-			}
-			else if(data[i].type == ""){
-				
-			}
-			else if(data[i].type == ""){
-				
-			}
-		};
+	function renderBoard(){
+		//On input Update board
 
 		//Render the Board
 
@@ -81,9 +88,12 @@ $(document).ready(function() {
 	}
 
 	function render() {
-		renderBoard();
 
-		renderSidebar();
+		renderBoard()
+
+		renderSidebar()
+
+		game.debug.body();
 
 	}
 
@@ -122,5 +132,19 @@ $(document).ready(function() {
 		// To play the animation with the new texture ( 'key', frameRate, loop, killOnComplete)
 		sprite.animations.play(animation_key, 7, false, true);
 	}
-	
+
 });
+
+
+//Initalize Socket.io
+var socket = io.connect();
+var session;
+
+socket.on('session', function (data) {
+	console.log(JSON.stringify(data));
+	session = data;
+});
+
+socket.on('update_board', function(data){
+	renderBoard(data);
+})
