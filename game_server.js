@@ -4,32 +4,52 @@ var mongoose = require('mongoose');
 
 var Game = mongoose.model('Game', require('./models/game'));
 var Player = mongoose.model('Player', require('./models/player'));
+var Board = mongoose.model('Board', require('./models/board'));
+var Board_Square = mongoose.model('Board Square', require('./models/board_square'));
 var User = require('./models/User');
 
 
-function loadRequestedData (user) { 
-	//Verify User's Cookie
-
-	//getVisableSquares()
+function loadRequestedData (socket, user, game) { 
+	var users_board = [];
+	
+	for(var i=0; i< game.board.board_squares.length; i++){
+		for(var j=0 i< game.board.board_squares[i].viewable.length; j++){
+			if(game.board.board_squares[i].viewable[j] == user._id){
+				users_board.push(game.board.board_squares[i]);	
+			}
+		}
+	}
 
 	//GetData on visable squares
+	
+	socket.emit('board data', {board_data: users_board});
 }
 
-function generateNewBoard(){
-
+function generateNewBoard(socket, game){
+	var new_board = new Board();
+	
+	
+	//Generate Planets
+	
+	//Generate Wormholes
+	
+	//Generate
+	
+	//Generate
 }
 
-function endOfTurn(user, data){
-	//Verify User's Cookie
-
-	//Check Data To see if correct
+function endOfTurn(socket, user, data){
+	//Check for Valid Turn
 
 	//Add Data to database
 
 	//Signal Next Turn
+	var nextuser = {};
+	socket.broadcast.emit('end turn', {
+		turn_end: user,
+		turn_begin: nextuser
+	});
 }
-
-var players = [];
 
 var gameID = 1;
 
