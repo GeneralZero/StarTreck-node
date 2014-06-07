@@ -44,21 +44,20 @@ exports.init = function(io, sessionSockets, db){
 			//socket.emit('session', session.passport);
 
 			//Get user from database
-			console.log(session.passport.user);
+			//console.log(session.passport.user);
 			User.findById(session.passport.user, function (err, user) {
-				console.log("User: " + user);
-
 				//Get current Game by ID
-				if(user.games.length == 0){
+				if(user.games[gameID] == null){
 					var current_game = new Game();
 					var current_player = new Player();
 
 					//current_game.save();
 					//current_player.save();
 
-					user.games.push({id:current_game.id, game: current_game, player: current_player});
+					user.games[gameID] = {id:current_game.id, game: current_game, player: current_player};
 
 					user.save();
+					console.log("New User: " + user);
 				}
 				else{
 					for (var i = 0; i < user.games.length; i++) {

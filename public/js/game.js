@@ -81,7 +81,7 @@ $(document).ready(function() {
 	}
 
 	function render() {
-		renderBoard();
+		//renderBoard();
 
 		renderSidebar();
 
