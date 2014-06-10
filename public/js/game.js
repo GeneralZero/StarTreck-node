@@ -77,6 +77,24 @@ $(document).ready(function() {
 		//Render Fog of War
 
 	}
+	
+	function renderTopbar () {
+		var style = { font: "14px Arial", fill: "#ffffff", align: "left" };
+		//Draw Reasearch label
+		game.add.text(0*(1024/5), 0, top_labels['research'] + research_points || 0, style);
+
+		//Draw espionage label
+		game.add.text(1*(1024/5), 0, top_labels['espionage'] + espionage_points || 0, style);
+
+		//Draw Credits label
+		game.add.text(2*(1024/5), 0, top_labels['credits'] + credits || 0, style);
+
+		//Draw political label
+		game.add.text(3*(1024/5), 0, top_labels['political'] + political_points || 0, style);
+
+		//Draw Class label
+		game.add.text(4*(1024/5), 0, top_labels['class'] + class || 'n/a', style);
+	}
 
 	function renderSidebar(){
 		//On update of varables update sidebar
