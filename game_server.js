@@ -13,7 +13,7 @@ function loadRequestedData (socket, user, game) {
 	var users_board = [];
 	
 	for(var i=0; i< game.board.board_squares.length; i++){
-		for(var j=0 i< game.board.board_squares[i].viewable.length; j++){
+		for(var j=0; i< game.board.board_squares[i].viewable.length; j++){
 			if(game.board.board_squares[i].viewable[j] == user._id){
 				users_board.push(game.board.board_squares[i]);
 				break;
@@ -25,6 +25,11 @@ function loadRequestedData (socket, user, game) {
 	
 	socket.emit('board data', {board_data: users_board});
 }
+
+function generateFakeBoard(socket, game){
+	
+}
+
 
 function generateNewBoard(socket, game){
 	var new_board = new Board();

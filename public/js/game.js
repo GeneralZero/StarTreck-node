@@ -16,7 +16,7 @@ $(document).ready(function() {
 	var universe = {};
 
 	var box_size = [32,32];
-	var top_labels = {"research": "Research Points:", "espionage": "Esponage Points:", "credits": "Credits:", "political": "Political Points:", "class": "Class:"}
+	var top_labels = {"research": "Research Points:", "espionage": "Esponage Points:", "credits": "Credits:", "political": "Political Points:", "classname": "Class:"}
 
 	/*
 	game.state.add('Boot', BallonBears.Boot);
@@ -34,15 +34,10 @@ $(document).ready(function() {
 	function create() {
 		//this.state.start('MainMenu');
 
-		//Initalize topbar
-		var topbar = game.add.graphics(0, 0);
-		topbar.beginFill(0x00008B, 1);
-		topbar.drawRect(0, 0, 1024, 32);
+		//Initalize topbar and sidebar
+		renderTopbar();
+		renderSidebar();
 
-		var sidebar = game.add.graphics(0, 0);
-		sidebar.beginFill(0x002387, 1);
-		sidebar.drawRect(32*20, 32, 1024, 32*21);
-		
 		planets = game.add.group();
 
 		for (var i = 20; i >= 0; i--) {
@@ -80,6 +75,13 @@ $(document).ready(function() {
 	
 	function renderTopbar () {
 		var style = { font: "14px Arial", fill: "#ffffff", align: "left" };
+
+		var research_points, espionage_points, credits, political_points, classname;
+
+		var topbar = game.add.graphics(0, 0);
+		topbar.beginFill(0x00008B, 1);
+		topbar.drawRect(0, 0, 1024, 32);
+
 		//Draw Reasearch label
 		game.add.text(0*(1024/5), 0, top_labels['research'] + research_points || 0, style);
 
@@ -93,15 +95,15 @@ $(document).ready(function() {
 		game.add.text(3*(1024/5), 0, top_labels['political'] + political_points || 0, style);
 
 		//Draw Class label
-		game.add.text(4*(1024/5), 0, top_labels['class'] + class || 'n/a', style);
+		game.add.text(4*(1024/5), 0, top_labels['classname'] + classname || 'n/a', style);
 	}
 
 	function renderSidebar(){
 		//On update of varables update sidebar
 
-		//Render Username
-
-		//Render Class
+		var sidebar = game.add.graphics(0, 0);
+		sidebar.beginFill(0x002387, 1);
+		sidebar.drawRect(32*20, 32, 1024, 32*21);
 
 	}
 

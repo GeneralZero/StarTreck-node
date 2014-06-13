@@ -9,7 +9,7 @@ html
     meta(name='author', content='')
     title #{title} | Hackathon Starter
     != css('styles')
-    != js('application')
+    != js('lib/jquery-2.1.0.min')
     if game
       != js('lib/phaser')
       script(src="/socket.io/socket.io.js")
