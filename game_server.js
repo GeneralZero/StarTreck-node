@@ -74,10 +74,7 @@ exports.init = function(io, sessionSockets, db){
 					var current_game = new Game();
 					var current_player = new Player();
 
-					//current_game.save();
-					//current_player.save();
-
-					user.games.push({id:current_game.id, game: current_game, player: current_player});
+					user.games.push({id:current_game._id, game: current_game, player: current_player});
 
 					user.save();
 				}
@@ -101,8 +98,10 @@ exports.init = function(io, sessionSockets, db){
 			
 			//Create New Game if user dosent have a game
 
-			socket.on('getBoardState', function(value) {
+			socket.on('getBoardState', function() {
 				console.log("getBoardState");
+
+				getBoardState()
 			});
 		}
 	});
