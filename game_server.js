@@ -9,7 +9,7 @@ var Board_Square = mongoose.model('Board Square', require('./models/board_square
 var User = require('./models/User');
 
 
-function loadRequestedData (socket, user, game) { 
+function loadBoardData (socket, user, game) { 
 	var users_board = [];
 	
 	for(var i=0; i< game.board.board_squares.length; i++){
@@ -101,12 +101,16 @@ exports.init = function(io, sessionSockets, db){
 
 			});
 			
-			//Create New Game if user dosent have a game
+			//Socket Listners
 
-			socket.on('getBoardState', function() {
+			socket.on('get_start_data', function () {
+				// body...
+			})
+
+			socket.on('get_board_state', function() {
 				console.log("getBoardState");
 
-				getBoardState()
+				loadBoardData(socket, user, game)
 			});
 		}
 	});

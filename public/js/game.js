@@ -1,18 +1,6 @@
-//Initalize Socket.io
-var socket = io.connect( window.location.protocol + '//' + window.location.host , {secure: true});
-
-socket.on('session', function (session){
-	console.log(session);
-})
-
-socket.on('get_board_data', function (data) {
-	for(var entity in data){
-		console.log(data[entity]);
-	}
-});
-
 $(document).ready(function() {
 	var game = new Phaser.Game(1024, 32*21, Phaser.AUTO, 'canvas', { preload: preload, create: create });
+	var player = {};
 	var universe = {};
 
 	var box_size = [32,32];
@@ -31,27 +19,44 @@ $(document).ready(function() {
 		game.load.spritesheet('coin', 'assets/sprites/coin.png', 32, 32);
 	}
 
+	function createFogOfWar (argument) {
+		// body...
+	}
+
+	function createStationary(game, plannet){
+		universe.planets.create((plannet.index/box_size[0])*box_size[1], (plannet.index%box_size[1])*box_size[0], plannet.name);
+
+		//Set Animations
+		universe.planets.animations.add('revolve');
+		universe.planets.animations.play('revolve', 10, true);
+	}
+
 	function create() {
 		//this.state.start('MainMenu');
+
+		//Load inital data from Server
+		socket.emit('get_start_data');
+		socket.emit('get_player_modifiers');
+
 
 		//Initalize topbar and sidebar
 		renderTopbar();
 		renderSidebar();
 
-		planets = game.add.group();
+		universe.planets = game.add.group();
 
 		for (var i = 20; i >= 0; i--) {
-			var planet = planets.create(i*box_size[0], (i+1)*box_size[1], 'coin');
+			var planet = universe.planets.create(i*box_size[0], (i+1)*box_size[1], 'coin');
 			//Set Attributies
 
 			//Set Animations
-			planet.animations.add('revolve');
-			planet.animations.play('revolve', 10, true);
+			universe.planets.animations.add('revolve');
+			universe.planets.animations.play('revolve', 10, true);
 
 			//Set Drags
-			planet.inputEnabled = true;
-			planet.input.enableDrag();
-			planet.input.enableSnap(box_size[0], box_size[1], false, true);
+			universe.planets.inputEnabled = true;
+			universe.planets.input.enableDrag();
+			universe.planets.input.enableSnap(box_size[0], box_size[1], false, true);
 		}
 	}
 
@@ -121,10 +126,6 @@ $(document).ready(function() {
 
 	}
 
-	function getBoardState(){
-		
-	}
-
 	function add_sprite_to_board(game, entity_name, location){
 		//This sprite is using a texture atlas for all of its animation data
 		var entity = game.add.sprite(location.x, location.y, entity_name);
@@ -144,27 +145,13 @@ $(document).ready(function() {
 		return entity;
 	}
 
-	function swap_textures(sprite, new_texture, animation_key){
+	function swap_textures(sprite, new_texture, animation_name){
 		// To load the new texture (('key', frame))
 		sprite.loadTexture(new_texture, 0);
 		// Adding an animation ( 'key' )
-		sprite.animations.add(animation_key);
+		sprite.animations.add(animation_name);
 		// To play the animation with the new texture ( 'key', frameRate, loop, killOnComplete)
-		sprite.animations.play(animation_key, 7, false, true);
+		sprite.animations.play(animation_name, 7, false, true);
 	}
 
 });
-
-
-//Initalize Socket.io
-var socket = io.connect();
-var session;
-
-socket.on('session', function (data) {
-	console.log(JSON.stringify(data));
-	session = data;
-});
-
-socket.on('update_board', function(data){
-	renderBoard(data);
-})
